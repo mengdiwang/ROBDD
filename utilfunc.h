@@ -9,8 +9,8 @@
 #ifndef ROBDD_utilfunc_h
 #define ROBDD_utilfunc_h
 
-typedef unsigned int nodetype;
-typedef int valtype;
+//typedef int int;
+//typedef int int;
 
 struct bddNode
 {
@@ -25,27 +25,27 @@ struct bddNode
         high = _high;
     }
     
-    valtype var;
-    nodetype low;
-    nodetype high;
+    int var;
+    int low;
+    int high;
 };
 
 
 class applyMem
 {
 public:
-    applyMem():u1(0),u2(0),u12
+    applyMem():u1(0),u2(0),u12(0)
     {
     }
     
-    applyMem(nodetype _u1, nodetype _u2, nodetype _u12)
+    applyMem(int _u1, int _u2, int _u12)
     {
         u1 = _u1; u2 = _u2; u12 = _u12;
     }
 
-    nodetype u1;
-    nodetype u2;
-    nodetype u12;
+    int u1;
+    int u2;
+    int u12;
 };
 
 
@@ -91,6 +91,36 @@ int apply_hash(applyMem *ap, int m) {
     h = r*h + (unsigned) ap->u2;
     h = h % (unsigned)m;
     return (int)h;
+}
+
+bool sat_equal(int *k1, int *k2)
+{
+    return *k1 == *k2;
+}
+
+int sat_hash(int *k, int m)
+{
+    REQUIRES(*k >=0 && m>0);
+    return *(int *)k % m;
+}
+
+int safe_shiftl(int n, int k) {
+    REQUIRES(n >= 0 && k >= 0);
+    if ((n > 0 && k >= (int)sizeof(int)*8)
+        || n > (INT_MAX>>k)) {
+        fprintf(stderr, "integer overflow %d << %d\n", n, k);
+        abort();
+    }
+    return n<<k;
+}
+
+int safe_plus(int m, int n) {
+    REQUIRES(m >= 0 && n >= 0);
+    if (n > INT_MAX-m) {
+        fprintf(stderr, "integer overflow %d + %d\n", m, n);
+        abort();
+    }
+    return m+n;
 }
 
 #endif
