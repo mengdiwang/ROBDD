@@ -31,7 +31,7 @@ public:
         
         T = new bddNode*[limit];
         T[0] = new bddNode(k+1, 0, 0);
-        T[1] = new bddNode(k+2, 0, 0);
+        T[1] = new bddNode(k+1, 0, 0);
     
         H = new Thtable<bddNode, int>(BDD_HASHTABLE_SIZE, &equal, &hash);
         REQUIRES(H->IsValid());
@@ -57,7 +57,7 @@ public:
     bool IsValid();
     void AnySat(int u);
     void AllSat(int u);
-    int size()
+    int Getsize()
     {
         return size;
     }
@@ -76,7 +76,7 @@ private:
 };
 
 bool Robdd::IsValid()
-{    
+{
     if(size<0 || size >= limit) return false;
     if(num_vars>INT_MAX-1) return false;
     for(int i=0; i<size; i++)
@@ -133,6 +133,7 @@ int Robdd::Mk(int var, int low, int high)
     T[u] = tmp;
     size ++;
     //e == NULL insert into hash table
+    e = new int;
     *e = u;
     H->insert(tmp, e);
     
@@ -160,7 +161,7 @@ int Robdd::Apply_rec(int (*op)(int t1, int t2), int u1, int u2, Thtable<applyMem
     REQUIRES(0 <= u1 && u1 < size);
     REQUIRES(0 <= u2 && u2 < size);
     REQUIRES(op != NULL);
-
+    
     if(u1 <= 1 && u2 <= 1)
     {
         return (*op) (u1, u2);
@@ -175,32 +176,32 @@ int Robdd::Apply_rec(int (*op)(int t1, int t2), int u1, int u2, Thtable<applyMem
             delete ap; ap = NULL;
             return aps->u12;
         }
-    
+        
         int u;
         int v1 = T[u1]->var;
         int v2 = T[u2]->var;
         if(v1 == v2)
         {
             u = Mk(v1,
-               Apply_rec(op, T[u1]->low, T[u2]->low, s),
-               Apply_rec(op, T[u1]->high, T[u2]->high, s));
+                   Apply_rec(op, T[u1]->low, T[u2]->low, s),
+                   Apply_rec(op, T[u1]->high, T[u2]->high, s));
         }
         else if(v1 < v2)
         {
             u = Mk(v1,
-               Apply_rec(op, T[u1]->low, u2, s),
-               Apply_rec(op, T[u1]->high, u2, s));
+                   Apply_rec(op, T[u1]->low, u2, s),
+                   Apply_rec(op, T[u1]->high, u2, s));
         }
         else
         {
             u = Mk(v1,
-               Apply_rec(op, u1, T[u2]->low, s),
-               Apply_rec(op, u1, T[u2]->high, s));
+                   Apply_rec(op, u1, T[u2]->low, s),
+                   Apply_rec(op, u1, T[u2]->high, s));
         }
-    
+        
         ap->u12 = u;
         s->insert(ap, ap);
-    
+        
         REQUIRES(IsValid());
         REQUIRES(0 <= u && u < size);
         return u;
@@ -240,10 +241,11 @@ int Robdd::SatCount(int u)
     assert(0 <=u && u<size);
     
     Thtable<int, int> *ST = new Thtable<int, int>(
-                SATCOUNT_HASHTABLE_SIZE, &sat_equal, &sat_hash);
+                                                  SATCOUNT_HASHTABLE_SIZE, &sat_equal, &sat_hash);
     
     int num = Sat_rec(u, ST);
     delete ST;
+    return num;
 }
 
 void Robdd::AnySat(int u)
@@ -257,7 +259,7 @@ void Robdd::AnySat(int u)
         printf("Cannot solve\n");
         return;
     }
-
+    
     bddNode *node = T[u];
     int v = node ->var;
     while(v<=num_vars)
@@ -291,13 +293,13 @@ void Robdd::AllSat_rec(int *arr, int level, int u)
     }
     
     REQUIRES(level == v);
-
+    
     if(u==1)
     {
         for (int i = 1; i < level; i++)
-            if (arr[i] < 0) printf(".");	
+            if (arr[i] < 0) printf(".");
             else printf("%d", arr[i]);
-                printf("=1\n");
+        printf("=1\n");
         return;
     }
     if(node->low != 0)
@@ -310,9 +312,9 @@ void Robdd::AllSat_rec(int *arr, int level, int u)
         arr[v] = 1;
         AllSat_rec(arr, v+1, node->high);
     }
-
+    
     return;
-
+    
 }
 
 void Robdd::AllSat(int u)
@@ -329,5 +331,6 @@ void Robdd::AllSat(int u)
     AllSat_rec(arr, 1, u);
     delete []arr;
 }
+
 
 #endif /* defined(__ROBDD__robdd__) */

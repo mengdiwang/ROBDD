@@ -102,7 +102,7 @@ element* Tlist<key, element>::insert(key *k, element *e)
     {
         //Tlnode<key, element> *old = p;
         element *olde = p->e;
-        key *oldk = p->k;
+        //key *oldk = p->k;
         p->e = e;
         p->k = k;
         return olde;
