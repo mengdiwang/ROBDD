@@ -46,8 +46,8 @@ public:
                 delete T[i];
                 T[i] = NULL;
             }
-            delete []T;
-            delete H;
+            delete []T; T=NULL;
+            delete H; H=NULL;
         }
     }
     
@@ -150,7 +150,7 @@ int Robdd::Apply(int (*op)(int t1, int t2), int u1, int u2)
     assert(0 <= u2 && u2 < size);
     Thtable<applyMem, applyMem> *s = new Thtable<applyMem, applyMem>(APPLY_HASHTABLE_SIZE, &apply_equal, &apply_hash);
     int u = Apply_rec(op, u1, u2, s);
-    delete s;
+    delete s; s = NULL;
     return u;
 }
 
@@ -244,7 +244,7 @@ int Robdd::SatCount(int u)
                                                   SATCOUNT_HASHTABLE_SIZE, &sat_equal, &sat_hash);
     
     int num = Sat_rec(u, ST);
-    delete ST;
+    delete ST; ST=NULL;
     return num;
 }
 
@@ -330,6 +330,7 @@ void Robdd::AllSat(int u)
     int *arr = new int[num_vars+1];
     AllSat_rec(arr, 1, u);
     delete []arr;
+    arr = NULL;
 }
 
 

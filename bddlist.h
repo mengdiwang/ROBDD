@@ -46,24 +46,30 @@ public:
     
     ~Tlist()
     {
-        Tlnode<key, element> *q;
-        while (head != NULL)
-        {
-            if (head->k != NULL)
-            {
-                delete head->k;
-                head->k = NULL;
-            }
-            if (head->e != NULL)
-            {
-                delete head->e;
-                head->e = NULL;
-            }
-            q = head->next;
-            delete head;
-            head = q;
-        }
+        Clear();
 //        printf("List called\n");
+    }
+    
+    void Clear()
+    {
+//TODO
+//        Tlnode<key, element> *q;
+//        while (head != NULL)
+//        {
+//            if (head->k != NULL)
+//            {
+//                delete head->k;
+//                head->k = NULL;
+//            }
+//            if (head->e != NULL)
+//            {
+//                delete head->e;
+//                head->e = NULL;
+//            }
+//            q = head->next;
+//            delete head;
+//            head = q;
+//        }
     }
     
     element* search(key *k);
