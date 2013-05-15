@@ -61,6 +61,10 @@ public:
     {
         return size;
     }
+    int GetNumVars()
+    {
+        return num_vars;
+    }
     
 private:
     int Apply_rec(int (*op)(int t1, int t2), int u1, int u2, Thtable<applyMem, applyMem> *s);
@@ -194,7 +198,7 @@ int Robdd::Apply_rec(int (*op)(int t1, int t2), int u1, int u2, Thtable<applyMem
         }
         else
         {
-            u = Mk(v1,
+            u = Mk(v2,
                    Apply_rec(op, u1, T[u2]->low, s),
                    Apply_rec(op, u1, T[u2]->high, s));
         }
