@@ -40,7 +40,7 @@ public:
     bool IsValid();
     void AnySat(int u);
     void AllSat(int u);
-    int Build(CNFExp *exp);
+    void Build(CNFExp *exp);
     int Restrict(int u, int j, int b);
     int Getsize();
     int GetNumVars();

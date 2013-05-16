@@ -10,7 +10,7 @@
 
 Robdd::Robdd(int k)
 {
-    Clear();
+    //Clear();
     
     num_vars = k;
     limit = BDD_LIMIT;
@@ -330,7 +330,7 @@ int Robdd::Restrict(int u, int j, int b)
     return Restrict_rec(u, j, b);
 }
 
-int Robdd::Build(CNFExp *exp)
+void Robdd::Build(CNFExp *exp)
 {
     REQUIRES(IsValid());
     assert(exp != NULL);
