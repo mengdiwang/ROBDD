@@ -11,11 +11,14 @@
 
 #include <stdlib.h>
 #include <limits.h>
+#include <stdio.h>
+#include <assert.h>
+
 #include "bddhtable.h"
 #include "caution.h"
 #include "utilfunc.h"
-#include "assert.h"
-#include <stdio.h>
+#include "CNFExp.h"
+
 
 #define BDD_LIMIT (1<<20)
 #define BDD_HASHTABLE_SIZE (1<<18)
@@ -37,16 +40,33 @@ public:
     bool IsValid();
     void AnySat(int u);
     void AllSat(int u);
-    int Build();
+    int Build(CNFExp *exp);
     int Restrict(int u, int j, int b);
     int Getsize();
     int GetNumVars();
+    
+    void Clear()
+    {
+        for(int i=0; i<size; i++)
+        {
+            if(T[i]!=NULL)
+            {
+                delete T[i];
+                T[i] = NULL;
+            }
+            delete []T; T=NULL;
+            delete H; H=NULL;
+        }
+    }
+    
+    void PrintNodes();
 private:
-    int Build_rec();
+    int Build_rec(CNFExp *exp, int i);
     int Restrict_rec(int u, int j, int b);
     int Apply_rec(int (*op)(int t1, int t2), int u1, int u2, Thtable<applyMem, applyMem> *s);
     int Sat_rec(int u, Thtable<int, int> *st);
     void AllSat_rec(int *arr, int level, int u);
+    
     
 private:
     int size;

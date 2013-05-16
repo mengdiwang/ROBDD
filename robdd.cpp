@@ -10,6 +10,8 @@
 
 Robdd::Robdd(int k)
 {
+    Clear();
+    
     num_vars = k;
     limit = BDD_LIMIT;
     size = 2;
@@ -24,16 +26,7 @@ Robdd::Robdd(int k)
 
 Robdd::~Robdd()
 {
-    for(int i=0; i<size; i++)
-    {
-        if(T[i]!=NULL)
-        {
-            delete T[i];
-            T[i] = NULL;
-        }
-        delete []T; T=NULL;
-        delete H; H=NULL;
-    }
+    Clear();
 }
 
 int Robdd::Getsize()
@@ -90,6 +83,9 @@ int Robdd::Mk(int var, int low, int high)
     //search node in the table T
     if(e != NULL)
     {
+#ifdef DD2
+        printf("MK found %d\n", *e);
+#endif
         delete tmp; tmp = NULL;
         return *e;
     }
@@ -102,6 +98,9 @@ int Robdd::Mk(int var, int low, int high)
     //insert new node into bdd
     int u = size;
     T[u] = tmp;
+#ifdef DD2
+    printf("MK insert @%d\n", u);
+#endif
     size ++;
     //e == NULL insert into hash table
     e = new int;
@@ -329,4 +328,58 @@ int Robdd::Restrict(int u, int j, int b)
     assert(0<=j && j<num_vars);//?
     
     return Restrict_rec(u, j, b);
+}
+
+int Robdd::Build(CNFExp *exp)
+{
+    REQUIRES(IsValid());
+    assert(exp != NULL);
+    
+    Build_rec(exp, 1);
+}
+
+int Robdd::Build_rec(CNFExp *exp, int i)
+{
+#ifdef DD3
+    printf("%s\n", exp->ex);
+#endif
+    assert(1 <= i);
+    assert((i>num_vars == exp->AllApply()));
+    
+    if(i > num_vars)
+    {
+#ifdef DD3
+        printf("value:%d\n",exp->GetValue());
+#endif
+        return exp->GetValue();
+    }
+    
+    CNFExp *exp0 = new CNFExp(exp->GetSize());
+    exp0->CpyVal(exp->ex, exp->mystack, exp->position);
+    exp0->Setvbyn(i, 0);
+    
+    int v0 = Build_rec(exp0, i+1);
+    
+    CNFExp *exp1 = new CNFExp(exp->GetSize());
+    exp1->CpyVal(exp->ex, exp->mystack, exp->position);
+    exp1->Setvbyn(i, 1); 
+    
+    int v1 = Build_rec(exp1, i+1);
+    
+    if(exp != NULL)
+    {
+        delete exp; exp = NULL;
+    }
+    
+    return Mk(i, v0, v1);
+}
+
+void Robdd::PrintNodes()
+{
+    assert(T!=NULL);
+    for(int i=0; i<size; i++)//TODO
+    {
+        if(T[i]!=NULL)
+            printf("pos:%d,var:%d,low:%d,high:%d\n", i, T[i]->var, T[i]->low, T[i]->high);
+    }
 }

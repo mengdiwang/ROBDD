@@ -27,7 +27,6 @@ public:
     {
 //        printf("Node called\n");
     }
-     
     
     key *k;
     element *e;
@@ -65,10 +64,9 @@ public:
     element* search(key *k);
     element* insert(key *k, element *e);
     bool IsValid(int h, int m, int (*hash) (key *k, int m));
-    
+
 private:
     Tlnode<key, element> *find(key *k);
-    
     bool (*equal) (key *k1, key *k2);
     Tlnode<key, element> *head;
 };
