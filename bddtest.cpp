@@ -12,21 +12,7 @@
 #include "robdd.h"
 #include <string.h>
 #include <assert.h>
-
-int andop(int b1, int b2)
-{
-    return b1 * b2;
-}
-
-int orop(int b1, int b2)
-{
-    return (b1 >= b2) ? b1 : b2;
-}
-
-int xorop(int b1, int b2)
-{
-    return (b1 + b2) % 2;
-}
+#include "nqueen.h"
 
 int main()
 {
@@ -66,7 +52,6 @@ int main()
     printf("ROBDD of %d", bdd->GetNumVars());
     printf(" vars has %d nodes\n",bdd->Getsize());
     printf("passed all tests!\n");
-    return 0;
     
     return 0;
 }

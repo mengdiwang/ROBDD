@@ -6,8 +6,8 @@
 //  Copyright (c) 2013年 Mengdi Wang. All rights reserved.
 //
 
-#ifndef __ROBDD__list__
-#define __ROBDD__list__
+#ifndef ROBDD_list_h
+#define ROBDD_list_h
 
 #include <stdlib.h>
 #include "caution.h"
@@ -47,12 +47,12 @@ public:
     ~Tlist()
     {
         Clear();
-//        printf("List called\n");
+        //        printf("List called\n");
     }
     
     void Clear()
     {
-//TODO
+        //TODO
         Tlnode<key, element> *q;
         while (head != NULL)
         {
@@ -65,10 +65,10 @@ public:
     element* search(key *k);
     element* insert(key *k, element *e);
     bool IsValid(int h, int m, int (*hash) (key *k, int m));
-
+    
 private:
     Tlnode<key, element> *find(key *k);
-               
+    
     bool (*equal) (key *k1, key *k2);
     Tlnode<key, element> *head;
 };
