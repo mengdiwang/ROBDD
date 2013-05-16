@@ -22,10 +22,10 @@ int Nqueen::SolveQueen()
         u = 0;
         for(int j=0; j<size; j++)
         {
-            x = robdd->Mk(i+j*size+1, 0, 1); // x_ij
-            u = robdd->Apply(&orop, u, x);
+            x = robdd->Mk(i+j*size+1, 0, 1);    // x_ij
+            u = robdd->Apply(&orop, u, x);      // sum = sum \/ x_ij;
         }
-        r = robdd->Apply(&andop, r, u);
+        r = robdd->Apply(&andop, r, u);         // r = r /\ x_ij
     }
     
     //no two queens in the same column
@@ -38,13 +38,13 @@ int Nqueen::SolveQueen()
             {
                 if(k!=j)
                 {
-                    notx = robdd->Mk(i+k*size+1, 1, 0);//x_ik
-                    u = robdd->Apply(&andop, notx, u);
+                    notx = robdd->Mk(i+k*size+1, 1, 0); //-x_ik
+                    u = robdd->Apply(&andop, notx, u);  //product = product /\ -x_ik
                 }
             }
-            x = robdd->Mk(i+j*size+1, 0, 1);//x_ij
-            u = robdd->Apply(&impop, x, u);
-            r = robdd->Apply(&andop, r, u);
+            x = robdd->Mk(i+j*size+1, 0, 1);    //x_ij
+            u = robdd->Apply(&impop, x, u);     //result = x_ij -> product
+            r = robdd->Apply(&andop, r, u);     //r = r /\ result
         }
     }
     
@@ -58,13 +58,13 @@ int Nqueen::SolveQueen()
             {
                 if(k!=i)
                 {
-                    notx = robdd->Mk(k+j*size+1, 1, 0); //x_kj
-                    u = robdd->Apply(&andop, notx, u);
+                    notx = robdd->Mk(k+j*size+1, 1, 0); //-x_kj
+                    u = robdd->Apply(&andop, notx, u);  //product = product /\ -x_kj
                 }
             }
-            x = robdd->Mk(i+j*size+1, 0, 1); //x_ij
-            u = robdd->Apply(&impop, x, u);
-            r = robdd->Apply(&andop, r, u);
+            x = robdd->Mk(i+j*size+1, 0, 1);    //x_ij
+            u = robdd->Apply(&impop, x, u);     //result = x_ij -> product
+            r = robdd->Apply(&andop, r, u);     //r = r /\ result
         }
     }
     
@@ -78,13 +78,13 @@ int Nqueen::SolveQueen()
             {
                 if(k!=0 && 0<=j+k && j+k<size)
                 {
-                    notx = robdd->Mk((i+k)+(j+k)*size+1, 1, 0);//x_(i+k)(j+k)
-                    u = robdd->Apply(&andop, notx, u);
+                    notx = robdd->Mk((i+k)+(j+k)*size+1, 1, 0); //-x_(i+k)(j+k)
+                    u = robdd->Apply(&andop, notx, u);          //product = product /\ -x_(i+k)(j+k)
                 }
             }
-            x = robdd->Mk(i+j*size+1, 0, 1); //x_ij
-            u = robdd->Apply(&impop, x, u);
-            r = robdd->Apply(&andop, r, u);
+            x = robdd->Mk(i+j*size+1, 0, 1);    //x_ij
+            u = robdd->Apply(&impop, x, u);     //result = x_ij -> product
+            r = robdd->Apply(&andop, r, u);     //r = r /\ result 
         }
     }
     
@@ -98,17 +98,17 @@ int Nqueen::SolveQueen()
             {
                 if(k!=0 && 0<=j-k && j-k<size)
                 {
-                    notx = robdd->Mk((i+k)+(j-k)*size+1, 1, 0);//x_(i+k)(j-k)
-                    u = robdd->Apply(&andop, notx, u);
+                    notx = robdd->Mk((i+k)+(j-k)*size+1, 1, 0); //-x_(i+k)(j-k)
+                    u = robdd->Apply(&andop, notx, u);          //product = product /\ -x_(i+k)(j-k)
                 }
             }
-            x = robdd->Mk(i+j*size+1, 0, 1);
-            u = robdd->Apply(&impop, x, u);
-            r = robdd->Apply(&andop, r, u);
+            x = robdd->Mk(i+j*size+1, 0, 1);    //x_ij
+            u = robdd->Apply(&impop, x, u);     //result = x_ij -> product
+            r = robdd->Apply(&andop, r, u);     //r = r /\ result
         }
     }
     
-    result = r;
+    result = r;//conjunction of all (x_ij -> product)
     return r;
 }
 
