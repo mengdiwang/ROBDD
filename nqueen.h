@@ -15,22 +15,39 @@
 class Nqueen
 {
 public:
-    Nqueen(int size)
+    Nqueen(int asize)
     {
-        robdd = new Robdd(size);
+        Clear();
+        size = asize;
+        robdd = new Robdd(size*size);
     }
     
     ~Nqueen()
+    {
+        Clear();
+    }
+    
+    int BuildQueen();
+    Robdd* GetBdd()
+    {
+        return robdd;
+    }
+    
+private:
+    void Clear()
     {
         if(robdd == NULL)
         {
             delete robdd;
             robdd = NULL;
         }
+        size = 0;
     }
     
 private:
+    int size;
     Robdd *robdd;
+    
     
 };
 

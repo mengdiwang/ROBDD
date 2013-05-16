@@ -1,9 +1,9 @@
 CC=g++
 CFLAGS=-c -Wall
 LDFLAGS=
-SOURCES=bddlist.cpp nqueen.cpp utilfunc.cpp bddhtable.cpp robdd.cpp BddMain.cpp
+SOURCES=utilfunc.cpp robdd.cpp bddtest.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
-EXECUTABLE=MIPSsim
+EXECUTABLE=Bddtest
 TEST=robdd
 
 all: $(SOURCES) $(EXECUTABLE)
