@@ -67,7 +67,7 @@ Thtable<key, element>::Thtable(int asize,
     num_ele = 0;
     array   = new Tlist<key, element>* [asize];
     
-#ifdef DEBUG
+#ifdef DD
     if(!IsValid())
         assert(0);
 #endif

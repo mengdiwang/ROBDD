@@ -74,7 +74,7 @@ int Nqueen::BuildQueen()
         for(int j=0; j<size; j++)
         {
             u = 1;
-            for(int k=-1; k<size-i; k++)
+            for(int k=-i; k<size-i; k++)
             {
                 if(k!=0 && 0<=j+k && j+k<size)
                 {
@@ -88,12 +88,13 @@ int Nqueen::BuildQueen()
         }
     }
     
+    //no two queens on same down diagonal
     for(int i=0; i<size; i++)
     {
         for(int j=0; j<size; j++)
         {
             u = 1;
-            for(int k=-1; k<size-i; k++)
+            for(int k=-i; k<size-i; k++)
             {
                 if(k!=0 && 0<=j-k && j-k<size)
                 {

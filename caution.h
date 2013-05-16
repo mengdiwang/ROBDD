@@ -10,7 +10,8 @@
 #define ROBDD_caution_h
 
 //#define DEBUG
-#ifdef DEBUG
+
+#ifdef DD
 #include <stdio.h>
 #include <assert.h>
 
