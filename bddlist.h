@@ -6,8 +6,8 @@
 //  Copyright (c) 2013年 Mengdi Wang. All rights reserved.
 //
 
-#ifndef ROBDD_list_h
-#define ROBDD_list_h
+#ifndef __ROBDD_list_h
+#define __ROBDD_list_h
 
 #include <stdlib.h>
 #include "caution.h"

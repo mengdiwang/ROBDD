@@ -27,11 +27,13 @@ public:
         Clear();
     }
     
-    int BuildQueen();
+    int SolveQueen();
     Robdd* GetBdd()
     {
         return robdd;
     }
+    
+    void PrintResults();
     
 private:
     void Clear()
@@ -42,9 +44,11 @@ private:
             robdd = NULL;
         }
         size = 0;
+        result = 0;
     }
     
 private:
+    int result;
     int size;
     Robdd *robdd;
     

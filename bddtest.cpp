@@ -6,13 +6,10 @@
 //  Copyright (c) 2013年 Mengdi Wang. All rights reserved.
 //
 
-#include <iostream>
-#include "bddhtable.h"
-#include "bddlist.h"
 #include "robdd.h"
+#include <iostream>
 #include <string.h>
 #include <assert.h>
-#include "nqueen.h"
 
 int main()
 {

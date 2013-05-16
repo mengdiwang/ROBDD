@@ -6,8 +6,8 @@
 //  Copyright (c) 2013年 Mengdi Wang. All rights reserved.
 //
 
-#ifndef ROBDD_htable_h
-#define ROBDD_htable_h
+#ifndef __ROBDD_htable_h
+#define __ROBDD_htable_h
 
 #include "bddlist.h"
 #include <stdlib.h>

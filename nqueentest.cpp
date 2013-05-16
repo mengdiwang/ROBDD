@@ -14,11 +14,13 @@ int main(int argc, const char * argv[])
 {
     int n = 8;			/* board of size n*n */
     Nqueen *nq = new Nqueen(n);
-    int r = nq->BuildQueen();		/* r = bdd representing n-queens constraints */
-    printf("Final bdd size: %d nodes\n", nq->GetBdd()->Getsize());
-    // allsat(B, r);		     /* print all solutions in compact form */
-    printf("%d solutions\n", nq->GetBdd()->SatCount(r));
-    
+    int r = nq->SolveQueen();		/* r = bdd representing n-queens constraints */
+    nq->PrintResults();
+    /*
+     printf("Final bdd size: %d nodes\n", nq->GetBdd()->Getsize());
+     nq->GetBdd()->AllSat(r);		     // print all solutions in compact form
+     printf("%d solutions\n", nq->GetBdd()->SatCount(r));
+     */
     return 0;
 }
 

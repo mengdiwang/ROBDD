@@ -9,7 +9,7 @@
 #include "nqueen.h"
 #include "utilfunc.h"
 
-int Nqueen::BuildQueen()
+int Nqueen::SolveQueen()
 {
     REQUIRES(robdd->IsValid());
     
@@ -108,5 +108,20 @@ int Nqueen::BuildQueen()
         }
     }
     
+    result = r;
     return r;
+}
+
+void Nqueen::PrintResults()
+{
+    if(result != 0 && robdd != NULL)
+    {
+        printf("Final bdd size: %d nodes\n", robdd->Getsize());
+        robdd->AllSat(result);		     /* print all solutions in compact form */
+        printf("%d solutions\n", robdd->SatCount(result));
+    }
+    else
+    {
+        printf("Not solved, run SolveQueen first\n");
+    }
 }

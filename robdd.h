@@ -22,7 +22,7 @@
 #define APPLY_HASHTABLE_SIZE (1<<16)
 #define SATCOUNT_HASHTABLE_SIZE (1<<10)
 
-template class Thtable<applyMem, applyMem>;
+//template class Thtable<applyMem, applyMem>;
 
 class Robdd
 {
