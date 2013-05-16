@@ -57,6 +57,8 @@ public:
     bool IsValid();
     void AnySat(int u);
     void AllSat(int u);
+    int Build();
+    int Restrict(int u, int j, int b);
     int Getsize()
     {
         return size;
@@ -67,6 +69,8 @@ public:
     }
     
 private:
+    int Build_rec();
+    int Restrict_rec(int u, int j, int b);
     int Apply_rec(int (*op)(int t1, int t2), int u1, int u2, Thtable<applyMem, applyMem> *s);
     int Sat_rec(int u, Thtable<int, int> *st);
     void AllSat_rec(int *arr, int level, int u);
@@ -244,8 +248,8 @@ int Robdd::SatCount(int u)
     REQUIRES(IsValid());
     assert(0 <=u && u<size);
     
-    Thtable<int, int> *ST = new Thtable<int, int>(
-                                                  SATCOUNT_HASHTABLE_SIZE, &sat_equal, &sat_hash);
+    Thtable<int, int> *ST =
+        new Thtable<int, int>(SATCOUNT_HASHTABLE_SIZE, &sat_equal, &sat_hash);
     
     int num = Sat_rec(u, ST);
     delete ST; ST=NULL;
@@ -335,6 +339,33 @@ void Robdd::AllSat(int u)
     AllSat_rec(arr, 1, u);
     delete []arr;
     arr = NULL;
+}
+
+int Robdd::Restrict_rec(int u, int j, int b)
+{
+    assert(0<=u && u<size);
+    
+    bddNode *node = T[u];
+    int v    = node->var;
+    int low  = node->low;
+    int high = node->high;
+    if(v > j)
+        return u;
+    if(v < j)
+        return Mk(v, Restrict_rec(low, j, b), Restrict_rec(high, j, b));
+    if(b == 0)//v==j
+        return Restrict_rec(low, j, b);
+    //v==j && b==1
+    return Restrict_rec(high, j, b);
+}
+
+int Robdd::Restrict(int u, int j, int b)
+{
+    REQUIRES(IsValid());
+    assert(0<=u && u<size);
+    assert(0<=j && j<num_vars);//?
+    
+    return Restrict_rec(u, j, b);
 }
 
 
