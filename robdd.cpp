@@ -377,15 +377,15 @@ int Robdd::Build_rec(CNFExp *exp, int i)
 void Robdd::PrintNodes()
 {
     assert(T!=NULL);
-    printf("----------------\n");
-    printf("|u\t|var|low|hi |\n");
-    printf("----------------\n");
+    printf("--------------------------------\n");
+    printf("|u\t|var\t|low\t|hi\t|\n");
+    printf("--------------------------------\n");
     for(int i=0; i<size; i++)//TODO
     {
         if(T[i]!=NULL)
             printf("|%d\t|%d\t|%d\t|%d\t|\n", i, T[i]->var, T[i]->low, T[i]->high);
         if(i==1)
-            printf("----------------\n");
+            printf("--------------------------------\n");
     }
-    printf("----------------\n");
+    printf("--------------------------------\n");
 }
