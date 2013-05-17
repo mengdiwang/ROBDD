@@ -48,5 +48,14 @@ int main(int argc, const char * argv[])
     Robdd *bdd = new Robdd(3);
     bdd->Build(texp);
     bdd->PrintNodes();
+    
+    std::string todo="((a&b)|(!a&!b))&((c&d)|(!c&!d))";
+    printf("%s build ROBDD, with a<b<c<d\n", todo.c_str());
+    CNFExp *texp1 = new CNFExp(todo);
+    Robdd *bdd1 = new Robdd(4);
+    bdd1->Build(texp1);
+    bdd1->PrintNodes();
+    
+    
 }
 

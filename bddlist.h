@@ -104,12 +104,12 @@ element* Tlist<key, element>::insert(key *k, element *e)
 }
 
 template<typename key, typename element>
-Tlnode<key, element>* Tlist<key, element>::find(key *k)
+Tlnode<key, element>* Tlist<key, element>::find(key *k)// LINUX FALUT
 {
     Tlnode<key, element> *p = head;
     while(p != NULL)
     {
-        if((p->k != NULL) && (equal)(k, p->k))
+        if(k!=NULL && (p->k != NULL) && (equal)(k, p->k))
             return p;
         p = p->next;
     }
