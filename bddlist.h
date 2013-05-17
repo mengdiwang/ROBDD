@@ -45,10 +45,11 @@ public:
     
     ~Tlist()
     {
-        Clear();
+        //Clear();
         //        printf("List called\n");
     }
     
+	/*
     void Clear()
     {
         //TODO
@@ -57,10 +58,11 @@ public:
         {
             q = head->next;
             delete head;
-            head = q;
+			head = q;
         }
     }
-    
+    */
+	
     element* search(key *k);
     element* insert(key *k, element *e);
     bool IsValid(int h, int m, int (*hash) (key *k, int m));

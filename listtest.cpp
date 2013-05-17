@@ -10,19 +10,20 @@
 #include "bddhtable.h"
 #include <string.h>
 #include <assert.h>
+#include <stdio.h>
 
 #define MAXINT_CHARS 12
 
-
-
-char* itoa(int n) {
+char* itoa(int n)
+{
     char* buf = new char[MAXINT_CHARS * sizeof(char)];
     snprintf(buf, MAXINT_CHARS, "%d", n);
     return buf;
 }
 
 /* elements */
-struct elem {
+struct elem 
+{
     char* word;			/* key */
     int count;			/* information */
     
@@ -38,7 +39,8 @@ struct elem {
 };
 
 /* key comparison */
-bool testequal(char *s1, char *s2) {
+bool testequal(void *s1, void  *s2) 
+{
     if(s1 == NULL || s2== NULL)
         return false;
     return strcmp((char*)s1,(char*)s2) == 0;		/* different from C0! */
@@ -68,9 +70,6 @@ int testhash(char *s, int m)
     ENSURES(0 <= hx && hx < m);
     return hx;
 }
-
-template class Thtable<char, elem>;
-
 
 int main(int argc, const char * argv[])
 {

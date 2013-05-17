@@ -76,7 +76,4 @@ private:
     Thtable<bddNode, int> *H;
 };
 
-
-
-
 #endif /* defined(ROBDD_robdd_h) */
