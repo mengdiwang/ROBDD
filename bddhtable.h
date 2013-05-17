@@ -66,7 +66,7 @@ Thtable<key, element>::Thtable(int asize,
     hash    = ahash;
     num_ele = 0;
     array   = new Tlist<key, element>* [asize];
-    
+    memset(array, 0, sizeof(Tlist<key, element>*) *size);
 #ifdef DD
     if(!IsValid())
         assert(0);
