@@ -39,7 +39,7 @@ struct elem
 };
 
 /* key comparison */
-bool testequal(void *s1, void  *s2) 
+bool testequal(char *s1, char *s2) 
 {
     if(s1 == NULL || s2== NULL)
         return false;
