@@ -17,7 +17,7 @@ Robdd::Robdd(int k)
     size = 2;
     
     T = new bddNode*[limit];
-	memset(T, 0, sizoef(limit)*sizeof(bddNode*));
+	memset(T, 0, sizeof(limit)*sizeof(bddNode*));
     T[0] = new bddNode(k+1, 0, 0);
     T[1] = new bddNode(k+1, 0, 0);
     
