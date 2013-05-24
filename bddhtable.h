@@ -91,8 +91,8 @@ template <typename key, typename element>
 element* Thtable<key, element>::insert(key *k, element *e)
 {
     REQUIRES(IsValid());
-    if(!IsValid())
-        return NULL;
+    //if(!IsValid())
+    //    return NULL;
     
     element *olde;
     int h = (hash)(k, size);
@@ -111,8 +111,8 @@ template <typename key, typename element>
 element *Thtable<key, element>::search(key *k)
 {
     REQUIRES(IsValid());
-    if(!IsValid())
-        return NULL;
+    //if(!IsValid())
+    //    return NULL;
     int h = (hash)(k, size);
     if(array[h] == NULL)
         return NULL;

@@ -227,7 +227,7 @@ void Robdd::AnySat(int u)
     
     if(u==0)
     {
-        printf("Cannot solve\n");
+        puts("Cannot solve");
         return;
     }
     
@@ -238,12 +238,12 @@ void Robdd::AnySat(int u)
         printf("x[%d]=", v);
         if(node->low ==0)
         {
-            printf("1\n");
+            puts("1");
             u = node->high;
         }
         else
         {
-            printf("0\n");
+            puts("0");
             u = node->low;
         }
         node = T[u];
@@ -270,7 +270,7 @@ void Robdd::AllSat_rec(int *arr, int level, int u)
         for (int i = 1; i < level; i++)
             if (arr[i] < 0) printf(".");
             else printf("%d", arr[i]);
-        printf("=1\n");
+        puts("=1");
         return;
     }
     if(node->low != 0)
@@ -294,7 +294,7 @@ void Robdd::AllSat(int u)
     assert(0<=u && u<size);
     if(u==0)
     {
-        printf("Cannot solve\n");
+        puts("Cannot solve");
         return;
     }
     
@@ -378,15 +378,15 @@ int Robdd::Build_rec(CNFExp *exp, int i)
 void Robdd::PrintNodes()
 {
     assert(T!=NULL);
-    printf("--------------------------------\n");
-    printf("|u\t|var\t|low\t|hi\t|\n");
-    printf("--------------------------------\n");
+    puts("--------------------------------");
+    puts("|u\t|var\t|low\t|hi\t|");
+    puts("--------------------------------");
     for(int i=0; i<size; i++)//TODO
     {
         if(T[i]!=NULL)
             printf("|%d\t|%d\t|%d\t|%d\t|\n", i, T[i]->var, T[i]->low, T[i]->high);
         if(i==1)
-            printf("--------------------------------\n");
+            puts("--------------------------------");
     }
-    printf("--------------------------------\n");
+    puts("--------------------------------");
 }
