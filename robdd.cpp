@@ -345,7 +345,7 @@ int Robdd::Build_rec(CNFExp *exp, int i)
     printf("%s\n", exp->ex);
 #endif
     assert(1 <= i);
-    assert((i>num_vars == exp->AllApply()));
+    //assert((i>num_vars == exp->AllApply()));
     
     if(i > num_vars)
     {
