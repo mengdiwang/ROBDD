@@ -1,6 +1,6 @@
 CC=g++
-
-CFLAGS=-c -Wall 
+LDFLAGS=-pg
+CFLAGS=-c -pg
 #-fno-implicit-templates
 SOURCES1=bddtest.cpp robdd.cpp utilfunc.cpp bddlist.h bddhtable.h CNFExp.cpp
 SOURCES2=listtest.cpp utilfunc.cpp bddlist.h bddhtable.h
