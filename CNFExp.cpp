@@ -8,17 +8,18 @@
 
 #include "CNFExp.h"
 
-void CNFExp::ProduceStack(std::string formula)
+
+void CNFExp::ProduceStack()
 {
-    formula+="#";
-    memset(mystack, 0, (size+2)*sizeof(char));
-    memset(ex, 0, size*sizeof(char));
 	int top =0;  //符号辅助 栈指针
 	mystack[top] = '#';
 	
 	position = 0; //后缀表达式 下标
 	int i=0; //遍历表达式
+	string here;
 	char ch = formula.at(i);
+	//忽略计算栈中的数字
+	//TODO:可以考虑在apply中，将字符串冗余信息删除
 	while(ch != '#')
 	{
 		switch(ch)
@@ -74,24 +75,125 @@ void CNFExp::ProduceStack(std::string formula)
 		position++;
 	}
     
-#ifdef DD
 	printf("转化为后缀表达为：\n");
+	string suffix(position +1,'a');
+	fomulaSuffix = suffix;
+    
 	for(i=0;i<position;i++)
 	{
 		printf("%c",ex[i]);
+		fomulaSuffix[i]= ex[i];
 	}
 	printf("\n");
-#endif
+	fomulaSuffix[position]= '#';
 }
 //-------------------------------------------
-void CNFExp::Setv(char var, int value)
+void CNFExp::apply( string var, int value)
 {
-	for(int i=0;i<position;i++)
+	int pos = findAtomic(var);
+	while(pos != -1)
 	{
-		if (ex[i] == var)
-			ex[i] = '0' + value;
+		fomulaSuffix[pos] = (value ==1)?'T':'F';
+		pos = findAtomic(var);
 	}
 }
+//-------------------------------------------
+int CNFExp::findAtomic(string var)
+{
+	int len = var.length();
+	int pos =  fomulaSuffix.find(var, 0);
+	while( pos != string::npos)
+	{
+		//保证找到原子命题
+		if(fomulaSuffix[pos+ len] >= '0' && fomulaSuffix[pos+ len] <= '9')
+		{
+			pos = fomulaSuffix.find(var, pos+1);
+		}
+		else
+			return pos;
+	}
+	return -1;
+}
+//-------------------------------------------
+bool CNFExp::AllApply()
+{
+	char here;
+	for(int i=0;i<position;i++)
+	{
+		here = fomulaSuffix[i];
+		if (here != '&' && here != '|' && here != '!' &&
+			here != 'T' && here != 'F'
+			&& !(here >='0' && here <='9') )
+			return false;
+	}
+	return true;
+}
+
+//---------------------------------------------
+bool CNFExp::GetValue()
+{
+	if ( !AllApply() )
+		return false;
+	
+	char CalCharHere;
+	bool Here =false;
+	char CalCharBefore;
+	bool Before = false;
+    
+	int top =0;  //符号辅助 栈指针
+	mystack[top] = '#';
+	int i=0; //遍历后缀表达式
+	char ch = fomulaSuffix[i];
+    
+	while(i!= position)
+	{
+		switch(ch)
+		{
+            case'|':
+                while( mystack[top] != 'T' && mystack[top] != 'F' )
+                    top--;
+                CalCharHere = mystack[top];
+				Here = (CalCharHere == 'T') ? true:false;
+                top--;
+                while( mystack[top] != 'T' && mystack[top] != 'F' )
+                    top--;
+                CalCharBefore = mystack[top];
+				Before = (CalCharBefore == 'T') ? true:false;
+                
+                mystack[top]= (Here || Before) ? 'T' : 'F' ;
+                break;
+                
+            case'&':
+                while( mystack[top] != 'T' && mystack[top] != 'F' )
+                    top--;
+                CalCharHere = mystack[top];
+				Here = (CalCharHere == 'T') ? true:false;
+                top--;
+                while( mystack[top] != 'T' && mystack[top] != 'F' )
+                    top--;
+                CalCharBefore = mystack[top];
+				Before = (CalCharBefore == 'T') ? true:false;
+                
+                mystack[top]= (Here && Before) ? 'T' : 'F' ;
+                break;
+                
+            case'!':
+                while( mystack[top] != 'T' && mystack[top] != 'F' )
+                    top--;
+                CalCharHere = mystack[top];
+				Here = (CalCharHere == 'T') ? true:false;
+                mystack[top]= Here ? 'F' : 'T' ;
+                break;
+            default:
+                top++;
+                mystack[top]= ch;
+		}
+		i++;
+		ch = fomulaSuffix[i];
+	}
+	return mystack[top] =='T';
+}
+
 //-------------------------------------------
 void CNFExp::Setvbyn(int varn, int value)// 1=='a'
 {
@@ -102,69 +204,4 @@ void CNFExp::Setvbyn(int varn, int value)// 1=='a'
 	}
 }
 //-------------------------------------------
-bool CNFExp::AllApply()
-{
-	for(int i=0;i<position;i++)
-	{
-		if (ex[i] != '&' && ex[i] != '|' && ex[i] != '!' && ex[i] != '!'
-			&& ex[i] != '1' && ex[i] != '0')
-			return false;
-	}
-    return true;
-}
 
-//---------------------------------------------
-bool CNFExp::GetValue()
-{
-	if ( !AllApply() )
-		return -1;
-	
-	int top =0;  //符号辅助 栈指针
-	mystack[top] = '#';
-	
-	int i=0; //遍历后缀表达式
-	char ch = ex[i];
-	
-	char CalCharHere;
-	bool Here =false;
-	char CalCharBefore;
-	bool Before = false;
-    
-	while(i!= position)
-	{
-		switch(ch)
-		{
-            case'|':
-                CalCharHere = mystack[top];
-				Here = (CalCharHere == '1') ? true:false;
-                top--;
-                CalCharBefore = mystack[top];
-				Before = (CalCharBefore == '1') ? true:false;
-                
-                mystack[top]= (Here || Before) ? '1' : '0' ;
-                break;
-                
-            case'&':
-                CalCharHere = mystack[top];
-				Here = (CalCharHere == '1') ? true:false;
-                top--;
-                CalCharBefore = mystack[top];
-				Before = (CalCharBefore == '1') ? true:false;
-                
-                mystack[top]= (Here && Before) ? '1' : '0' ;
-                break;
-                
-            case'!':
-                CalCharHere = mystack[top];
-				Here = (CalCharHere == '1') ? true:false;
-                mystack[top]= Here ? '0' : '1' ;
-                break;
-            default:
-                top++;
-                mystack[top]= ch;
-		}
-		i++;
-		ch = ex[i];
-	}
-	return mystack[top] =='1';
-}
