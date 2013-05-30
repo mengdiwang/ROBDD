@@ -49,7 +49,7 @@ public:
     {
         for(int i=0; i<size; i++)
         {
-            if(T[i]!=NULL)
+            if(T!=NULL && T[i]!=NULL)
             {
                 delete T[i];
                 T[i] = NULL;
