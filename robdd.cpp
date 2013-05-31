@@ -25,10 +25,10 @@ Robdd::Robdd(int k)
     REQUIRES(H->IsValid());
 }
 
-void Robdd::InitVars()
+void Robdd::InitVars(int num)
 {
-    varset = new int[num_vars+2];
-    for(int i=0; i<num_vars; i++)
+    varset = new int[num_vars<<2+2];
+    for(int i=1; i<=num; i++)
     {
         varset[i<<1] = Mk(i, 0, 1);
         varset[i<<1+1] = Mk(i, 1, 0);
@@ -495,7 +495,6 @@ void Robdd::Build(CNFExp *exp)
 
 int Robdd::Build_rec(CNFExp *exp, int i)
 {
-    clock_t start, finish;
 #ifdef DD3
     printf("%s\n", exp->ex);
 #endif
@@ -530,13 +529,73 @@ int Robdd::Build_rec(CNFExp *exp, int i)
     return Mk(i, v0, v1);
 }
 
+void Robdd::MarkNodes(int idx)
+{
+    if(idx < 2)
+        return;
+    
+    bddNode *node = T[idx];
+    
+    if(node->mark & MARKON || node->low == -1)
+        return;
+    
+    node->mark |= MARKON;
+    
+    MarkNodes(node->low);
+    MarkNodes(node->high);
+}
+
+void Robdd::UnmarkNodes(int idx)
+{
+    if(idx < 2)
+        return;
+    
+    bddNode *node = T[idx];
+    
+    if(!(node->mark & MARKON) || node->low == -1)
+        return;
+    
+    node->mark &= MARKOFF;
+    
+    UnmarkNodes(node->low);
+    UnmarkNodes(node->high);
+    
+}
+
+void Robdd::PrintNodes(int idx)
+{
+    assert(T!=NULL);
+    
+    MarkNodes(idx);
+
+    puts("-------------------------");
+    puts("|  u  | var | low |  hi |");
+    puts("-------------------------");
+    
+    for(int i=0; i<2; i++)
+        if(T[i]!=NULL)
+            printf("|%5d|%5d|%5d|%5d|\n", i, T[i]->var, T[i]->low, T[i]->high);
+    
+    for(int i=0; i<size; i++)//TODO
+    {
+        if(T[i]!=NULL && T[i]->mark &MARKON)
+            printf("|%5d|%5d|%5d|%5d|\n", i, T[i]->var, T[i]->low, T[i]->high);
+        if(i==1)
+              puts("-------------------------");
+    }
+    puts("-------------------------");
+    
+    UnmarkNodes(idx);
+}
+
 void Robdd::PrintNodes()
 {
     assert(T!=NULL);
     puts("--------------------------------");
     puts("|u\t|var\t|low\t|hi\t|");
     puts("--------------------------------");
-    for(int i=0; i<size; i++)//TODO
+    
+    for(int i=2; i<size; i++)//TODO
     {
         if(T[i]!=NULL)
             printf("|%d\t|%d\t|%d\t|%d\t|\n", i, T[i]->var, T[i]->low, T[i]->high);
@@ -546,6 +605,7 @@ void Robdd::PrintNodes()
     puts("--------------------------------");
 }
 
+//----------------------------------------------
 //Operation of BDD
 //----------------------------------------------
 int Robdd::bdd_and(int u1, int u2)

@@ -19,12 +19,18 @@
 #include "utilfunc.h"
 #include "CNFExp.h"
 
-
 #define BDD_LIMIT (1<<20)
 #define BDD_HASHTABLE_SIZE (1<<18)
 #define APPLY_HASHTABLE_SIZE (1<<16)
 #define SATCOUNT_HASHTABLE_SIZE (1<<10)
 #define OPERATOR_NUM    11
+
+//buddy, to make mark cout for print table
+#define MARKON   0x200000    /* Bit used to mark a node (1) */
+#define MARKOFF  0x1FFFFF    /* - unmark */
+#define UNMARKp(p)  (node->mark &= MARKOFF)
+#define MARKEDp(p)  (node->mark & MARKON)
+
 //template class Thtable<applyMem, applyMem>;
 enum Operator
 {
@@ -76,7 +82,7 @@ public:
     int GetNumVars();
     int Apply(int u1, int u2, Operator op);
     int Not(int u1);
-    void InitVars();
+    void InitVars(int num);
 
     
     int bdd_and(int u1, int u2);
@@ -93,14 +99,14 @@ public:
     
     int GetIthVar(int var)
     {
-        if(0<=var && var<num_vars)
+        if(1<=var && var<=num_vars)
             return varset[var<<1];
         return -1;
     }
     
     int GetIthVarNeg(int var)
     {
-        if(0<=var && var<num_vars)
+        if(1<=var && var<=num_vars)
             return varset[var<<1+1];
         return -1;
     }
@@ -125,6 +131,7 @@ public:
     }
     
     void PrintNodes();
+    void PrintNodes(int idx);
 private:
     int Build_rec(CNFExp *exp, int i);
     int Restrict_rec(int u, int j, int b);
@@ -133,7 +140,8 @@ private:
     int Sat_rec(int u, Thtable<int, int> *st);
     void AllSat_rec(int *arr, int level, int u);
     int Not_rec(int u1, Thtable<int, int> &s);
-    
+    void MarkNodes(int idx);
+    void UnmarkNodes(int idx);
     
 private:
     int size;

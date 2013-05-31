@@ -18,20 +18,18 @@
 
 struct bddNode
 {
-    bddNode():var(0),low(0),high(0)
+    bddNode():var(0),low(-1),high(-1),mark(0)
     {
     }
     
-    bddNode(int _var, int _low, int _high)
+    bddNode(int _var, int _low, int _high):var(_var),low(_low),high(_high),mark(0)
     {
-        var = _var;
-        low = _low;
-        high = _high;
     }
     
     int var;//!! var stated from 1
     int low;
     int high;
+    int mark;
 };
 
 

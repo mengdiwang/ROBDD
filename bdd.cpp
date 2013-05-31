@@ -161,17 +161,7 @@ bdd bdd::operator=(const bdd &r)
     if(idx != r.idx)
     {
         idx = r.idx;
+        robdd = robdd;
     }
     return *this;
 }
-
-
-bdd bdd::operator=(int r)
-{
-    if (idx != r)
-    {
-        idx = r;
-    }
-    return *this;
-}
-
