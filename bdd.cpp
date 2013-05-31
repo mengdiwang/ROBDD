@@ -8,40 +8,48 @@
 
 #include "bdd.h"
 
+int dump=1;
+
 inline bdd bdd_not(const bdd &r)
 {
-    return r.robdd->Not(r.idx);
+    int idx = r.robdd->Not(r.idx);
+    bdd ret(r);
+    ret.idx = idx;
+    return ret;
 }
 
 inline bdd bdd_apply(const bdd &l, const bdd &r, Operator op)
 {
-    return r.robdd->Apply(l.idx, r.idx, op);
+    int idx = r.robdd->Apply(l.idx, r.idx, op);
+    bdd ret(r);
+    ret.idx = idx;
+    return ret;
 }
 
-inline bdd bdd_and(const bdd &l, const bdd &r)
-{
-    return r.robdd->Apply(l.idx, r.idx, AND);
-}
-
-inline bdd bdd_or(const bdd &l, const bdd &r)
-{
-    return r.robdd->Apply(l.idx, r.idx, OR);
-}
-
-inline bdd bdd_xor(const bdd &l, const bdd &r)
-{
-    return r.robdd->Apply(l.idx, r.idx, XOR);
-}
-
-inline bdd bdd_imp(const bdd &l, const bdd &r)
-{
-    return r.robdd->Apply(l.idx, r.idx, IMPL);
-}
-
-inline bdd bdd_biimp(const bdd &l, const bdd &r)
-{
-    return r.robdd->Apply(l.idx, r.idx, BiImpl);
-}
+//inline bdd bdd_and(const bdd &l, const bdd &r)
+//{
+//    return r.robdd->Apply(l.idx, r.idx, AND);
+//}
+//
+//inline bdd bdd_or(const bdd &l, const bdd &r)
+//{
+//    return r.robdd->Apply(l.idx, r.idx, OR);
+//}
+//
+//inline bdd bdd_xor(const bdd &l, const bdd &r)
+//{
+//    return r.robdd->Apply(l.idx, r.idx, XOR);
+//}
+//
+//inline bdd bdd_imp(const bdd &l, const bdd &r)
+//{
+//    return r.robdd->Apply(l.idx, r.idx, IMPL);
+//}
+//
+//inline bdd bdd_biimp(const bdd &l, const bdd &r)
+//{
+//    return r.robdd->Apply(l.idx, r.idx, BiImpl);
+//}
 
 //bdd bdd::operator=(const bdd &r);
 
@@ -150,7 +158,7 @@ bdd bdd_false(void)
 
 bdd bdd::operator=(const bdd &r)
 {
-    if (idx != r.idx)
+    if(idx != r.idx)
     {
         idx = r.idx;
     }

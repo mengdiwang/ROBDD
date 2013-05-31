@@ -76,6 +76,8 @@ public:
     int GetNumVars();
     int Apply(int u1, int u2, Operator op);
     int Not(int u1);
+    void InitVars();
+
     
     int bdd_and(int u1, int u2);
     int bdd_xor(int u1, int u2);
@@ -89,17 +91,20 @@ public:
     int bdd_inimpl(int u1, int u2);
     int bdd_not(int u1, int u2);
     
-    int SetOne(int var)
+    int GetIthVar(int var)
     {
-        return Mk(var, 0, 1);
+        if(0<=var && var<num_vars)
+            return varset[var<<1];
+        return -1;
     }
     
-    int SetZero(int var)
+    int GetIthVarNeg(int var)
     {
-        return Mk(var, 1, 0);
+        if(0<=var && var<num_vars)
+            return varset[var<<1+1];
+        return -1;
     }
 
-    
     void Clear()
     {
         for(int i=0; i<size; i++)
@@ -109,8 +114,13 @@ public:
                 delete T[i];
                 T[i] = NULL;
             }
-            delete []T; T=NULL;
-            delete H; H=NULL;
+            delete []T; T = NULL;
+            delete H; H = NULL;
+        }
+        
+        if(varset !=NULL)
+        {
+            delete[] varset; varset = NULL;
         }
     }
     
@@ -129,6 +139,7 @@ private:
     int size;
     int limit;
     int num_vars;
+    int *varset;
     bddNode **T;
     Thtable<bddNode, int> *H;
 };

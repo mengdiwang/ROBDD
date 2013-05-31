@@ -17,19 +17,21 @@ public:
     bdd():var(0),robdd(NULL),idx(0)
     {
     }
-    
-    bdd(int _var)
+    bdd(int _idx)
     {
-        var = _var;
+        var = 0;
         robdd = NULL;
-        idx = 0;
+        idx = _idx;
     }
-    
-    bdd(int _var, Robdd *_robdd)
+    bdd(int _idx, Robdd *_robdd)
     {
-        var = _var;
+        idx = _idx;
         robdd = _robdd;
     }
+    bdd(bdd const& _bdd):robdd(_bdd.robdd), var(_bdd.var), idx(_bdd.idx)
+    {
+    }
+    
     
     void SetBase(Robdd *_robdd)
     {
@@ -46,15 +48,25 @@ public:
         return robdd;
     }
     
-    bool Init(int val)
+    bool GetIthvar(int val)
     {
-        if(robdd!=NULL)
+        var = val;
+        int _idx = robdd->GetIthVar(val);
+        if(_idx != -1)
         {
-            if(val == 1)
-                idx = robdd->SetOne(var);
-            else
-                idx = robdd->SetZero(var);
-            
+            idx = _idx;
+            return true;
+        }
+        return false;
+    }
+    
+    bool GetIthvarNeg(int val)
+    {
+        var = val;
+        int _idx = robdd->GetIthVarNeg(val);
+        if(_idx != -1)
+        {
+            idx = _idx;
             return true;
         }
         return false;

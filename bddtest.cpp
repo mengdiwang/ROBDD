@@ -6,6 +6,7 @@
 //  Copyright (c) 2013年 Mengdi Wang. All rights reserved.
 //
 
+#include "CNFExp.h"
 #include "robdd.h"
 #include "bdd.h"
 #include <iostream>
@@ -58,31 +59,82 @@ void test2()
     int u[SIZE] = {0};
     Robdd bdd = Robdd(2);
     
-    u[1] = bdd.SetOne(1);
-    u[2] = bdd.SetZero(2);
-    u[3] = bdd.bdd_and(u[1], u[2]);
+    u[1] = bdd.GetIthVar(1);
+    u[2] = bdd.GetIthVarNeg(2);
+    if(u[1]>0 && u[2]>0)
+        u[3] = bdd.bdd_and(u[1], u[2]);
     bdd.PrintNodes();
 }
 
 void test3()
 {
-    const int SIZE = 30;
+    const int SIZE = 4;
     Robdd *base = new Robdd(SIZE);
-    bdd bddlist[SIZE+1];
-    for(int i=1; i<=SIZE; i++)
+    base->InitVars();
+    bdd bddlist[SIZE];
+    for(int i=0; i<SIZE-1; i++)
     {
         bddlist[i].SetBase(base);
-        bddlist[i].SetVar(i);
+        bool ret = bddlist[i].GetIthvar(i);
+        if(!ret)
+        {
+            printf("Error @%d",i);
+            return;
+        }
     }
-    bddlist[1].Init(1);
-    bddlist[2].Init(0);
-    bddlist[3] = bddlist[1] & bddlist[2];
-    base->PrintNodes();
+    
+    bddlist[3] = bddlist[1] &  bddlist[2] | !bddlist[0];
+    //base->PrintNodes();
+    base->AnySat(bddlist[3].id());
+}
+
+void test4()
+{
+    printf("Test boolean expression:a&b|!c\n");
+    CNFExp *myexp = new CNFExp("a&b|!c");
+
+    int valt[8] = {1,0,1,0,1,0,1,1};
+    int c = 0;
+
+    printf("-----------\n");
+    printf("|a|b|c|Exp|\n");
+    printf("-----------\n");
+    for(int i=0; i<2; i++)
+    {
+        for(int j=0; j<2; j++)
+        {
+            for(int k=0; k<2; k++)
+            {
+                myexp->ProduceStack("a&b|!c");
+                myexp->Setv('a',i);
+                myexp->Setv('b',j);
+                myexp->Setv('c',k);
+                int val = myexp->GetValue();
+                printf("|%d|%d|%d| %d |\n",i,j,k,val);
+                //printf("--------------------------\n");
+                assert(val==valt[c]);
+                c++;
+            }
+        }
+    }
+    printf("-----------\n");
+    printf("All Test Pass\n");
+    printf("--------------------------\n\n");
+}
+
+void test5()
+{
+
+    printf("a&b|!c build ROBDD, with a<b<c\n");
+    CNFExp *texp = new CNFExp("a&b|!c");
+    Robdd *bdd = new Robdd(3);
+    bdd->Build(texp);
+    bdd->PrintNodes();
 }
 
 int main()
 {
     test3();
-    test2();
+    test5();
     return 0;
 }

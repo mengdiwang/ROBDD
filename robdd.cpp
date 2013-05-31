@@ -15,14 +15,24 @@ Robdd::Robdd(int k)
     num_vars = k;
     limit = BDD_LIMIT;
     size = 2;
-    
     T = new bddNode*[limit];
 	memset(T, 0, sizeof(limit)*sizeof(bddNode*));
     T[0] = new bddNode(k+1, 0, 0);
     T[1] = new bddNode(k+1, 0, 0);
-    
+
     H = new Thtable<bddNode, int>(BDD_HASHTABLE_SIZE, &equal, &hash);
+
     REQUIRES(H->IsValid());
+}
+
+void Robdd::InitVars()
+{
+    varset = new int[num_vars+2];
+    for(int i=0; i<num_vars; i++)
+    {
+        varset[i<<1] = Mk(i, 0, 1);
+        varset[i<<1+1] = Mk(i, 1, 0);
+    }
 }
 
 Robdd::~Robdd()
@@ -72,7 +82,8 @@ bool Robdd::IsValid()
 int Robdd::Mk(int var, int low, int high)
 {
     REQUIRES(IsValid());
-    assert(1 <= var && var <= num_vars);
+    //assert(1 <= var && var <= num_vars);
+    assert(0 <= var && var <= num_vars);
     assert(0 <= low && low < size);
     assert(0 <= high && high < size);
     
@@ -201,11 +212,10 @@ int Robdd::Not_rec(int u1, Thtable<int, int> &s)
     }
     else
     {
-        int *ap = &u1;
-        if(ap != NULL)
+        int *aps = s.search(&u1);
+        if(aps != NULL)
         {
-            delete ap; ap = NULL;
-            return *ap;
+            return *aps;
         }
         
         u = Mk(T[u1]->var,
@@ -473,7 +483,6 @@ int Robdd::Restrict(int u, int j, int b)
 //    return Mk(i, v0, v1);
 //}
 
-double timeall = 0;
 
 void Robdd::Build(CNFExp *exp)
 {
@@ -481,9 +490,6 @@ void Robdd::Build(CNFExp *exp)
     assert(exp != NULL);
     
     Build_rec(exp, 1);
-    
-    printf( "CNF time %f ms\n", timeall);
-    
 }
 
 
@@ -504,24 +510,15 @@ int Robdd::Build_rec(CNFExp *exp, int i)
         return exp->GetValue();
     }
     
-    start = clock();
-    
     CNFExp *exp0 = new CNFExp(exp->GetSize());
     exp0->CpyVal(exp->ex, exp->mystack, exp->position);
     exp0->Setvbyn(i, 0);
     
-    finish = clock();
-    float duration = (double)(finish - start) / CLOCKS_PER_SEC *1000;
-    timeall +=duration;
-    
     int v0 = Build_rec(exp0, i+1);
-    
-    start = clock();
+
     CNFExp *exp1 = new CNFExp(exp->GetSize());
     exp1->CpyVal(exp->ex, exp->mystack, exp->position);
     exp1->Setvbyn(i, 1); 
-    finish = clock();
-    timeall +=duration;
     
     int v1 = Build_rec(exp1, i+1);
     
