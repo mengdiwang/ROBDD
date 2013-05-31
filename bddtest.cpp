@@ -11,7 +11,7 @@
 #include <string.h>
 #include <assert.h>
 
-int main()
+void test1()
 {
     int SIZE = 37;
     int *u = new int[SIZE];
@@ -39,7 +39,7 @@ int main()
     
     u[7] = bdd->Mk(1, 0, 1);	// u[7] = x1
     u[8] = bdd->Mk(2, 0, 1);	// u[8] = x2
-    u[9] = bdd->Apply(&andop, u[7], u[8]); 	// u[9] = x1 /\ x2 
+    u[9] = bdd->Apply(&andop, u[7], u[8]); 	// u[9] = x1 /\ x2
     for (int i = 1; i < 10; i++) {
         printf("u[%d] = %d\n", i, u[i]);
     }
@@ -49,6 +49,20 @@ int main()
     printf("ROBDD of %d", bdd->GetNumVars());
     printf(" vars has %d nodes\n",bdd->Getsize());
     printf("passed all tests!\n");
+}
+
+void test2()
+{
+    int SIZE = 37;
+    int *u = new int[SIZE];
+    Robdd *bdd = new Robdd(2);
     
+    u[3] = bdd->Apply(&xorop, u[2], 1);//u[3] = (x1/\x2)xor 1 =  ~(x1 /\ x2)
+    u[4] = bdd->Apply(&andop, u[2], 0);//u[4] = u[2] /\ u[3] = 0
+    
+}
+
+int main()
+{
     return 0;
 }

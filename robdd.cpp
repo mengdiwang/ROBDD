@@ -331,16 +331,61 @@ int Robdd::Restrict(int u, int j, int b)
     return Restrict_rec(u, j, b);
 }
 
+//void Build_Nrec(CNFExp *exp)
+//{
+//    int i = 1;
+//
+//#ifdef DD3
+//    printf("%s\n", exp->ex);
+//#endif
+//    assert(1 <= i);
+//    //assert((i>num_vars == exp->AllApply()));
+//        
+//    while(i <= num_vars)
+//    {
+//#ifdef DD3
+//        printf("value:%d\n",exp->GetValue());
+//#endif
+//        return exp->GetValue();
+//    }
+//        
+//    CNFExp *exp0 = new CNFExp(exp->GetSize());
+//    exp0->CpyVal(exp->ex, exp->mystack, exp->position);
+//    exp0->Setvbyn(i, 0);
+//        
+//    int v0 = Build_rec(exp0, i+1);
+//        
+//    CNFExp *exp1 = new CNFExp(exp->GetSize());
+//    exp1->CpyVal(exp->ex, exp->mystack, exp->position);
+//    exp1->Setvbyn(i, 1);
+//
+//    int v1 = Build_rec(exp1, i+1);
+//
+//    if(exp != NULL)
+//    {
+//    //delete exp; exp = NULL;
+//    }
+//
+//    return Mk(i, v0, v1);
+//}
+
+double timeall = 0;
+
 void Robdd::Build(CNFExp *exp)
 {
     REQUIRES(IsValid());
     assert(exp != NULL);
     
     Build_rec(exp, 1);
+    
+    printf( "CNF time %f ms\n", timeall);
+    
 }
+
 
 int Robdd::Build_rec(CNFExp *exp, int i)
 {
+    clock_t start, finish;
 #ifdef DD3
     printf("%s\n", exp->ex);
 #endif
@@ -355,21 +400,30 @@ int Robdd::Build_rec(CNFExp *exp, int i)
         return exp->GetValue();
     }
     
+    start = clock();
+    
     CNFExp *exp0 = new CNFExp(exp->GetSize());
     exp0->CpyVal(exp->ex, exp->mystack, exp->position);
     exp0->Setvbyn(i, 0);
     
+    finish = clock();
+    float duration = (double)(finish - start) / CLOCKS_PER_SEC *1000;
+    timeall +=duration;
+    
     int v0 = Build_rec(exp0, i+1);
     
+    start = clock();
     CNFExp *exp1 = new CNFExp(exp->GetSize());
     exp1->CpyVal(exp->ex, exp->mystack, exp->position);
     exp1->Setvbyn(i, 1); 
+    finish = clock();
+    timeall +=duration;
     
     int v1 = Build_rec(exp1, i+1);
     
     if(exp != NULL)
     {
-        delete exp; exp = NULL;
+        //delete exp; exp = NULL;
     }
     
     return Mk(i, v0, v1);
