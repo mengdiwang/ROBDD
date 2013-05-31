@@ -29,7 +29,7 @@ struct bddNode
         high = _high;
     }
     
-    int var;
+    int var;//!! var stated from 1
     int low;
     int high;
 };
@@ -60,14 +60,16 @@ int hash(bddNode *k, int m);
 
 /* key comparison = node comparison */
 bool equal(bddNode *k1, bddNode *k2) ;
+
 /* key equality compares inputs, ignore output */
 bool apply_equal(applyMem *ap1, applyMem *ap2) ;
+
 /* hash functions uses pseudorandom numbers */
 int apply_hash(applyMem *ap, int m);
 
-bool sat_equal(int *k1, int *k2);
+bool int_equal(int *k1, int *k2);
 
-int sat_hash(int *k, int m);
+int int_hash(int *k, int m);
 
 int safe_shiftl(int n, int k);
 
@@ -93,5 +95,6 @@ int xorop(int b1, int b2);
 int impop(int b1, int b2);
 
 int iffop(int b1, int b2);
+
 
 #endif

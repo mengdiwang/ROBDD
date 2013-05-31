@@ -176,6 +176,48 @@ int Robdd::Apply_rec(int u1, int u2, Operator op, Thtable<applyMem, applyMem> &s
     }
 }
 
+int Robdd::Not(int u1)
+{
+    REQUIRES(IsValid());
+    assert(0 <= u1 && u1 < size);
+    
+    Thtable<int, int> s = Thtable<int, int>(APPLY_HASHTABLE_SIZE, &int_equal, &int_hash);
+    int u = Not_rec(u1, s);
+    return u;
+}
+
+int Robdd::Not_rec(int u1, Thtable<int, int> &s)
+{
+    assert(0<=u1 && u1 < size);
+    int u = 0;
+    
+    if(u1 == 0)
+    {
+        return 1;
+    }
+    else if(u1 == 1)
+    {
+        return 0;
+    }
+    else
+    {
+        int *ap = &u1;
+        if(ap != NULL)
+        {
+            delete ap; ap = NULL;
+            return *ap;
+        }
+        
+        u = Mk(T[u1]->var,
+                   Not_rec(T[u1]->low, s),
+                   Not_rec(T[u1]->high, s));
+        
+        s.insert(&u1, &u);
+    }
+    
+    return u;
+}
+
 int Robdd::Apply(int (*op)(int t1, int t2), int u1, int u2)
 {
     REQUIRES(IsValid());
@@ -274,7 +316,7 @@ int Robdd::SatCount(int u)
     assert(0 <=u && u<size);
     
     Thtable<int, int> *ST =
-    new Thtable<int, int>(SATCOUNT_HASHTABLE_SIZE, &sat_equal, &sat_hash);
+    new Thtable<int, int>(SATCOUNT_HASHTABLE_SIZE, &int_equal, &int_hash);
     
     int num = Sat_rec(u, ST);
     delete ST; ST=NULL;
@@ -505,4 +547,61 @@ void Robdd::PrintNodes()
             puts("--------------------------------");
     }
     puts("--------------------------------");
+}
+
+//Operation of BDD
+//----------------------------------------------
+int Robdd::bdd_and(int u1, int u2)
+{
+    return Apply(u1, u2, AND);
+}
+
+inline int Robdd::bdd_xor(int u1, int u2)
+{
+    return Apply(u1, u2, XOR);
+}
+
+inline int Robdd::bdd_or(int u1, int u2)
+{
+    return Apply(u1, u2, OR);
+}
+
+inline int Robdd::bdd_nand(int u1, int u2)
+{
+    return Apply(u1, u2, NAND);
+}
+
+inline int Robdd::bdd_nor(int u1, int u2)
+{
+    return Apply(u1, u2, NOR);
+}
+
+inline int Robdd::bdd_impl(int u1, int u2)
+{
+    return Apply(u1, u2, IMPL);
+}
+
+inline int Robdd::bdd_bimpl(int u1, int u2)
+{
+    return Apply(u1, u2, BiImpl);
+}
+
+inline int Robdd::bdd_gt(int u1, int u2)
+{
+    return Apply(u1, u2, GT);
+}
+
+inline int Robdd::bdd_lt(int u1, int u2)
+{
+    return Apply(u1, u2, LT);
+}
+
+inline int Robdd::bdd_inimpl(int u1, int u2)
+{
+    return Apply(u1, u2, InvIMPL);
+}
+
+inline int Robdd::bdd_not(int u1, int u2)
+{
+    return Apply(u1, u2, NOT);
 }

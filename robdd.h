@@ -75,6 +75,30 @@ public:
     int Getsize();
     int GetNumVars();
     int Apply(int u1, int u2, Operator op);
+    int Not(int u1);
+    
+    int bdd_and(int u1, int u2);
+    int bdd_xor(int u1, int u2);
+    int bdd_or(int u1, int u2);
+    int bdd_nand(int u1, int u2);
+    int bdd_nor(int u1, int u2);
+    int bdd_impl(int u1, int u2);
+    int bdd_bimpl(int u1, int u2);
+    int bdd_gt(int u1, int u2);
+    int bdd_lt(int u1, int u2);
+    int bdd_inimpl(int u1, int u2);
+    int bdd_not(int u1, int u2);
+    
+    int SetOne(int var)
+    {
+        return Mk(var, 0, 1);
+    }
+    
+    int SetZero(int var)
+    {
+        return Mk(var, 1, 0);
+    }
+
     
     void Clear()
     {
@@ -98,7 +122,7 @@ private:
     int Apply_rec(int u1, int u2, Operator op, Thtable<applyMem, applyMem> &s);
     int Sat_rec(int u, Thtable<int, int> *st);
     void AllSat_rec(int *arr, int level, int u);
-    
+    int Not_rec(int u1, Thtable<int, int> &s);
     
     
 private:

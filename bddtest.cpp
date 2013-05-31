@@ -7,6 +7,7 @@
 //
 
 #include "robdd.h"
+#include "bdd.h"
 #include <iostream>
 #include <string.h>
 #include <assert.h>
@@ -53,16 +54,35 @@ void test1()
 
 void test2()
 {
-    int SIZE = 37;
-    int *u = new int[SIZE];
-    Robdd *bdd = new Robdd(2);
+    const int SIZE = 37;
+    int u[SIZE] = {0};
+    Robdd bdd = Robdd(2);
     
-    u[3] = bdd->Apply(&xorop, u[2], 1);//u[3] = (x1/\x2)xor 1 =  ~(x1 /\ x2)
-    u[4] = bdd->Apply(&andop, u[2], 0);//u[4] = u[2] /\ u[3] = 0
-    
+    u[1] = bdd.SetOne(1);
+    u[2] = bdd.SetZero(2);
+    u[3] = bdd.bdd_and(u[1], u[2]);
+    bdd.PrintNodes();
+}
+
+void test3()
+{
+    const int SIZE = 30;
+    Robdd *base = new Robdd(SIZE);
+    bdd bddlist[SIZE+1];
+    for(int i=1; i<=SIZE; i++)
+    {
+        bddlist[i].SetBase(base);
+        bddlist[i].SetVar(i);
+    }
+    bddlist[1].Init(1);
+    bddlist[2].Init(0);
+    bddlist[3] = bddlist[1] & bddlist[2];
+    base->PrintNodes();
 }
 
 int main()
 {
+    test3();
+    test2();
     return 0;
 }

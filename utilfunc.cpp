@@ -56,12 +56,12 @@ int apply_hash(applyMem *ap, int m)
     return (int)h;
 }
 
-bool sat_equal(int *k1, int *k2)
+bool int_equal(int *k1, int *k2)
 {
     return *k1 == *k2;
 }
 
-int sat_hash(int *k, int m)
+int int_hash(int *k, int m)
 {
     REQUIRES(*k >=0 && m>0);
     return *(int *)k % m;
