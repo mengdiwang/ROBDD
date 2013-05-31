@@ -24,8 +24,38 @@
 #define BDD_HASHTABLE_SIZE (1<<18)
 #define APPLY_HASHTABLE_SIZE (1<<16)
 #define SATCOUNT_HASHTABLE_SIZE (1<<10)
-
+#define OPERATOR_NUM    11
 //template class Thtable<applyMem, applyMem>;
+enum Operator
+{
+    AND     = 0,
+    XOR     = 1,
+    OR      = 2,
+    NAND    = 3,
+    NOR     = 4,
+    IMPL    = 5,
+    BiImpl  = 6,
+    GT      = 7,
+    LT      = 8,
+    InvIMPL = 9,
+    NOT     = 10,
+};
+
+
+static int oprres[OPERATOR_NUM][4] =
+{
+    {0,0,0,1},  /* and                       ( & )         */
+    {0,1,1,0},  /* xor                       ( ^ )         */
+    {0,1,1,1},  /* or                        ( | )         */
+    {1,1,1,0},  /* nand                                    */
+    {1,0,0,0},  /* nor                                     */
+    {1,1,0,1},  /* implication               ( >> )        */
+    {1,0,0,1},  /* bi-implication                          */
+    {0,0,1,0},  /* difference /greater than  ( - ) ( > )   */
+    {0,1,0,0},  /* less than                 ( < )         */
+    {1,0,1,1},  /* inverse implication       ( << )        */
+    {1,1,0,0}   /* not                       ( ! )         */
+};
 
 class Robdd
 {
@@ -44,6 +74,7 @@ public:
     int Restrict(int u, int j, int b);
     int Getsize();
     int GetNumVars();
+    int Apply(int u1, int u2, Operator op);
     
     void Clear()
     {
@@ -64,8 +95,10 @@ private:
     int Build_rec(CNFExp *exp, int i);
     int Restrict_rec(int u, int j, int b);
     int Apply_rec(int (*op)(int t1, int t2), int u1, int u2, Thtable<applyMem, applyMem> *s);
+    int Apply_rec(int u1, int u2, Operator op, Thtable<applyMem, applyMem> &s);
     int Sat_rec(int u, Thtable<int, int> *st);
     void AllSat_rec(int *arr, int level, int u);
+    
     
     
 private:

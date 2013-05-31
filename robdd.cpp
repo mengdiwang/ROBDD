@@ -114,6 +114,68 @@ int Robdd::Mk(int var, int low, int high)
     return u;
 }
 
+int Robdd::Apply(int u1, int u2, Operator op)
+{
+    REQUIRES(IsValid());
+    assert(0 <= u1 && u1 < size);
+    assert(0 <= u2 && u2 < size);
+    Thtable<applyMem, applyMem> s = Thtable<applyMem, applyMem>(APPLY_HASHTABLE_SIZE, &apply_equal, &apply_hash);
+    int u = Apply_rec(u1, u2, op, s);
+    return u;
+}
+
+int Robdd::Apply_rec(int u1, int u2, Operator op, Thtable<applyMem, applyMem> &s)
+{
+    REQUIRES(0 <= u1 && u1 < size);
+    REQUIRES(0 <= u2 && u2 < size);
+    REQUIRES(op != NULL);
+    
+    if(u1 <= 1 && u2 <= 1)
+    {
+        return oprres[op][u1<<1 | u2];
+    }
+    else
+    {
+        //G(u1, u2);
+        applyMem *ap = new applyMem(u1, u2, 0);
+        applyMem *aps = s.search(ap);
+        if(aps != NULL) //already computed
+        {
+            delete ap; ap = NULL;
+            return aps->u12;
+        }
+        
+        int u;
+        int v1 = T[u1]->var;
+        int v2 = T[u2]->var;
+        if(v1 == v2)
+        {
+            u = Mk(v1,
+                   Apply_rec(T[u1]->low, T[u2]->low, op, s),
+                   Apply_rec(T[u1]->high, T[u2]->high, op, s));
+        }
+        else if(v1 < v2)
+        {
+            u = Mk(v1,
+                   Apply_rec(T[u1]->low, u2, op, s),
+                   Apply_rec(T[u1]->high, u2, op, s));
+        }
+        else
+        {
+            u = Mk(v2,
+                   Apply_rec(u1, T[u2]->low, op, s),
+                   Apply_rec(u1, T[u2]->high, op, s));
+        }
+        
+        ap->u12 = u;
+        s.insert(ap, ap);
+        
+        REQUIRES(IsValid());
+        REQUIRES(0 <= u && u < size);
+        return u;
+    }
+}
+
 int Robdd::Apply(int (*op)(int t1, int t2), int u1, int u2)
 {
     REQUIRES(IsValid());
@@ -423,7 +485,7 @@ int Robdd::Build_rec(CNFExp *exp, int i)
     
     if(exp != NULL)
     {
-        //delete exp; exp = NULL;
+        delete exp; exp = NULL;
     }
     
     return Mk(i, v0, v1);
