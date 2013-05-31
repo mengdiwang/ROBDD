@@ -15,14 +15,24 @@ Robdd::Robdd(int k)
     num_vars = k;
     limit = BDD_LIMIT;
     size = 2;
-    
     T = new bddNode*[limit];
 	memset(T, 0, sizeof(limit)*sizeof(bddNode*));
     T[0] = new bddNode(k+1, 0, 0);
     T[1] = new bddNode(k+1, 0, 0);
-    
+
     H = new Thtable<bddNode, int>(BDD_HASHTABLE_SIZE, &equal, &hash);
+
     REQUIRES(H->IsValid());
+}
+
+void Robdd::InitVars(int num)
+{
+    varset = new int[num_vars<<2+2];
+    for(int i=1; i<=num; i++)
+    {
+        varset[i<<1] = Mk(i, 0, 1);
+        varset[i<<1+1] = Mk(i, 1, 0);
+    }
 }
 
 Robdd::~Robdd()
@@ -72,7 +82,8 @@ bool Robdd::IsValid()
 int Robdd::Mk(int var, int low, int high)
 {
     REQUIRES(IsValid());
-    assert(1 <= var && var <= num_vars);
+    //assert(1 <= var && var <= num_vars);
+    assert(0 <= var && var <= num_vars);
     assert(0 <= low && low < size);
     assert(0 <= high && high < size);
     
@@ -110,6 +121,109 @@ int Robdd::Mk(int var, int low, int high)
     
     ENSURES(IsValid());
     ENSURES(0 <= u && u < size);
+    
+    return u;
+}
+
+int Robdd::Apply(int u1, int u2, Operator op)
+{
+    REQUIRES(IsValid());
+    assert(0 <= u1 && u1 < size);
+    assert(0 <= u2 && u2 < size);
+    Thtable<applyMem, applyMem> s = Thtable<applyMem, applyMem>(APPLY_HASHTABLE_SIZE, &apply_equal, &apply_hash);
+    int u = Apply_rec(u1, u2, op, s);
+    return u;
+}
+
+int Robdd::Apply_rec(int u1, int u2, Operator op, Thtable<applyMem, applyMem> &s)
+{
+    REQUIRES(0 <= u1 && u1 < size);
+    REQUIRES(0 <= u2 && u2 < size);
+    REQUIRES(op != NULL);
+    
+    if(u1 <= 1 && u2 <= 1)
+    {
+        return oprres[op][u1<<1 | u2];
+    }
+    else
+    {
+        //G(u1, u2);
+        applyMem *ap = new applyMem(u1, u2, 0);
+        applyMem *aps = s.search(ap);
+        if(aps != NULL) //already computed
+        {
+            delete ap; ap = NULL;
+            return aps->u12;
+        }
+        
+        int u;
+        int v1 = T[u1]->var;
+        int v2 = T[u2]->var;
+        if(v1 == v2)
+        {
+            u = Mk(v1,
+                   Apply_rec(T[u1]->low, T[u2]->low, op, s),
+                   Apply_rec(T[u1]->high, T[u2]->high, op, s));
+        }
+        else if(v1 < v2)
+        {
+            u = Mk(v1,
+                   Apply_rec(T[u1]->low, u2, op, s),
+                   Apply_rec(T[u1]->high, u2, op, s));
+        }
+        else
+        {
+            u = Mk(v2,
+                   Apply_rec(u1, T[u2]->low, op, s),
+                   Apply_rec(u1, T[u2]->high, op, s));
+        }
+        
+        ap->u12 = u;
+        s.insert(ap, ap);
+        
+        REQUIRES(IsValid());
+        REQUIRES(0 <= u && u < size);
+        return u;
+    }
+}
+
+int Robdd::Not(int u1)
+{
+    REQUIRES(IsValid());
+    assert(0 <= u1 && u1 < size);
+    
+    Thtable<int, int> s = Thtable<int, int>(APPLY_HASHTABLE_SIZE, &int_equal, &int_hash);
+    int u = Not_rec(u1, s);
+    return u;
+}
+
+int Robdd::Not_rec(int u1, Thtable<int, int> &s)
+{
+    assert(0<=u1 && u1 < size);
+    int u = 0;
+    
+    if(u1 == 0)
+    {
+        return 1;
+    }
+    else if(u1 == 1)
+    {
+        return 0;
+    }
+    else
+    {
+        int *aps = s.search(&u1);
+        if(aps != NULL)
+        {
+            return *aps;
+        }
+        
+        u = Mk(T[u1]->var,
+                   Not_rec(T[u1]->low, s),
+                   Not_rec(T[u1]->high, s));
+        
+        s.insert(&u1, &u);
+    }
     
     return u;
 }
@@ -212,7 +326,7 @@ int Robdd::SatCount(int u)
     assert(0 <=u && u<size);
     
     Thtable<int, int> *ST =
-    new Thtable<int, int>(SATCOUNT_HASHTABLE_SIZE, &sat_equal, &sat_hash);
+    new Thtable<int, int>(SATCOUNT_HASHTABLE_SIZE, &int_equal, &int_hash);
     
     int num = Sat_rec(u, ST);
     delete ST; ST=NULL;
@@ -331,6 +445,45 @@ int Robdd::Restrict(int u, int j, int b)
     return Restrict_rec(u, j, b);
 }
 
+//void Build_Nrec(CNFExp *exp)
+//{
+//    int i = 1;
+//
+//#ifdef DD3
+//    printf("%s\n", exp->ex);
+//#endif
+//    assert(1 <= i);
+//    //assert((i>num_vars == exp->AllApply()));
+//        
+//    while(i <= num_vars)
+//    {
+//#ifdef DD3
+//        printf("value:%d\n",exp->GetValue());
+//#endif
+//        return exp->GetValue();
+//    }
+//        
+//    CNFExp *exp0 = new CNFExp(exp->GetSize());
+//    exp0->CpyVal(exp->ex, exp->mystack, exp->position);
+//    exp0->Setvbyn(i, 0);
+//        
+//    int v0 = Build_rec(exp0, i+1);
+//        
+//    CNFExp *exp1 = new CNFExp(exp->GetSize());
+//    exp1->CpyVal(exp->ex, exp->mystack, exp->position);
+//    exp1->Setvbyn(i, 1);
+//
+//    int v1 = Build_rec(exp1, i+1);
+//
+//    if(exp != NULL)
+//    {
+//    //delete exp; exp = NULL;
+//    }
+//
+//    return Mk(i, v0, v1);
+//}
+
+
 void Robdd::Build(CNFExp *exp)
 {
     REQUIRES(IsValid());
@@ -338,6 +491,7 @@ void Robdd::Build(CNFExp *exp)
     
     Build_rec(exp, 1);
 }
+
 
 int Robdd::Build_rec(CNFExp *exp, int i)
 {
@@ -360,7 +514,7 @@ int Robdd::Build_rec(CNFExp *exp, int i)
     exp0->Setvbyn(i, 0);
     
     int v0 = Build_rec(exp0, i+1);
-    
+
     CNFExp *exp1 = new CNFExp(exp->GetSize());
     exp1->CpyVal(exp->ex, exp->mystack, exp->position);
     exp1->Setvbyn(i, 1); 
@@ -375,13 +529,73 @@ int Robdd::Build_rec(CNFExp *exp, int i)
     return Mk(i, v0, v1);
 }
 
+void Robdd::MarkNodes(int idx)
+{
+    if(idx < 2)
+        return;
+    
+    bddNode *node = T[idx];
+    
+    if(node->mark & MARKON || node->low == -1)
+        return;
+    
+    node->mark |= MARKON;
+    
+    MarkNodes(node->low);
+    MarkNodes(node->high);
+}
+
+void Robdd::UnmarkNodes(int idx)
+{
+    if(idx < 2)
+        return;
+    
+    bddNode *node = T[idx];
+    
+    if(!(node->mark & MARKON) || node->low == -1)
+        return;
+    
+    node->mark &= MARKOFF;
+    
+    UnmarkNodes(node->low);
+    UnmarkNodes(node->high);
+    
+}
+
+void Robdd::PrintNodes(int idx)
+{
+    assert(T!=NULL);
+    
+    MarkNodes(idx);
+
+    puts("-------------------------");
+    puts("|  u  | var | low |  hi |");
+    puts("-------------------------");
+    
+    for(int i=0; i<2; i++)
+        if(T[i]!=NULL)
+            printf("|%5d|%5d|%5d|%5d|\n", i, T[i]->var, T[i]->low, T[i]->high);
+    
+    for(int i=0; i<size; i++)//TODO
+    {
+        if(T[i]!=NULL && T[i]->mark &MARKON)
+            printf("|%5d|%5d|%5d|%5d|\n", i, T[i]->var, T[i]->low, T[i]->high);
+        if(i==1)
+              puts("-------------------------");
+    }
+    puts("-------------------------");
+    
+    UnmarkNodes(idx);
+}
+
 void Robdd::PrintNodes()
 {
     assert(T!=NULL);
     puts("--------------------------------");
     puts("|u\t|var\t|low\t|hi\t|");
     puts("--------------------------------");
-    for(int i=0; i<size; i++)//TODO
+    
+    for(int i=2; i<size; i++)//TODO
     {
         if(T[i]!=NULL)
             printf("|%d\t|%d\t|%d\t|%d\t|\n", i, T[i]->var, T[i]->low, T[i]->high);
@@ -389,4 +603,62 @@ void Robdd::PrintNodes()
             puts("--------------------------------");
     }
     puts("--------------------------------");
+}
+
+//----------------------------------------------
+//Operation of BDD
+//----------------------------------------------
+int Robdd::bdd_and(int u1, int u2)
+{
+    return Apply(u1, u2, AND);
+}
+
+inline int Robdd::bdd_xor(int u1, int u2)
+{
+    return Apply(u1, u2, XOR);
+}
+
+inline int Robdd::bdd_or(int u1, int u2)
+{
+    return Apply(u1, u2, OR);
+}
+
+inline int Robdd::bdd_nand(int u1, int u2)
+{
+    return Apply(u1, u2, NAND);
+}
+
+inline int Robdd::bdd_nor(int u1, int u2)
+{
+    return Apply(u1, u2, NOR);
+}
+
+inline int Robdd::bdd_impl(int u1, int u2)
+{
+    return Apply(u1, u2, IMPL);
+}
+
+inline int Robdd::bdd_bimpl(int u1, int u2)
+{
+    return Apply(u1, u2, BiImpl);
+}
+
+inline int Robdd::bdd_gt(int u1, int u2)
+{
+    return Apply(u1, u2, GT);
+}
+
+inline int Robdd::bdd_lt(int u1, int u2)
+{
+    return Apply(u1, u2, LT);
+}
+
+inline int Robdd::bdd_inimpl(int u1, int u2)
+{
+    return Apply(u1, u2, InvIMPL);
+}
+
+inline int Robdd::bdd_not(int u1, int u2)
+{
+    return Apply(u1, u2, NOT);
 }

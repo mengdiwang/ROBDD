@@ -9,50 +9,46 @@
 #ifndef __ROBDD__CNFExp__
 #define __ROBDD__CNFExp__
 
-#include<iostream>
-#include<string>
-#include<set>
-using namespace std;
+#include <string.h>
+#include <iostream>
+#include <string>
 
-/*
-typedef struct mystruct
-{
-	bool HasCaled;
-	string proposition;
-	char calculation;
-} FomulaElement;
-*/
 class CNFExp
 {
-public:
+public:    
 	CNFExp(std::string aformula)
 	{
-		formula = aformula + "#\0";
-		size = formula.size();
+        //formula = aformula + "#";
+		size = aformula.size()+1;
 		ex = new char[size];
 		mystack = new char[size +2];
-		ProduceStack();
+        memset(ex, 0, sizeof(char)*size);
+        memset(mystack, 0, sizeof(char)*size);
+		ProduceStack(aformula);
 	}
     
     CNFExp(int asize)
     {
         size = asize;
-        ex = new char[size];
+		ex = new char[size];
         mystack = new char[size +2];
     }
     
 	~CNFExp()
 	{
         if(ex!=NULL)
-		{delete[] ex; ex = NULL;}
-		
-        if(mystack != NULL)
-        {   delete[] mystack; mystack = NULL;}
+        {
+            delete[] ex; ex = NULL;
+		}
+        if(mystack!=NULL)
+        {
+            delete[] mystack; mystack = NULL;
+        }
 	}
 
-	void apply(string var, int value);
+    void Setvbyn(int varn, int value);// 1=='a'
+	void Setv(char var, int value);
 	bool GetValue();
-    
     
     void CpyVal(char* _ex, char* _mystack, int _position)
     {
@@ -65,20 +61,16 @@ public:
     {
         return size;
     }
-    
-    void Setvbyn(int varn, int value);// 1=='a'
 
-    
-    char* ex;      /*存储后缀表达式*/
-	char* mystack; /*作为栈使用 存储符号*/
-	int position;
-private:
-	void ProduceStack();
+	void ProduceStack(std::string aformula);
 	bool AllApply();
-	int findAtomic(string var);
 
-	std::string formula;  //CNF exp
-	string fomulaSuffix;  //后缀计算式
-	int size;   //后缀表达式可用长度
+	//std::string formula;    //CNF exp
+	int size;               //后缀表达式可用长度
+public:
+	char* ex;               //存储后缀表达式
+	char* mystack;          //作为栈使用 存储符号
+	int position;
 };
+
 #endif /* defined(__ROBDD__CNFExp__) */

@@ -2,10 +2,10 @@ CC=g++
 LDFLAGS=-pg
 CFLAGS=-c -pg
 #-fno-implicit-templates
-SOURCES1=bddtest.cpp robdd.cpp utilfunc.cpp bddlist.h bddhtable.h CNFExp.cpp
+SOURCES1=bddtest.cpp robdd.cpp utilfunc.cpp bddlist.h bddhtable.h CNFExp.cpp bdd.cpp
 SOURCES2=listtest.cpp utilfunc.cpp bddlist.h bddhtable.h
-SOURCES3=nqueentest.cpp nqueen.cpp robdd.cpp utilfunc.cpp bddlist.h bddhtable.h CNFExp.cpp
-SOURCES4=testCNF.cpp robdd.cpp utilfunc.cpp CNFExp.cpp bddlist.h bddhtable.h
+SOURCES3=nqueentest.cpp nqueen.cpp robdd.cpp utilfunc.cpp bddlist.h bddhtable.h CNFExp.cpp bdd.cpp
+SOURCES4=testCNF.cpp robdd.cpp utilfunc.cpp CNFExp.cpp bddlist.h bddhtable.h bdd.cpp
 OBJECTS1=$(SOURCES1:.cpp=.o)
 OBJECTS2=$(SOURCES2:.cpp=.o)
 OBJECTS3=$(SOURCES3:.cpp=.o)
