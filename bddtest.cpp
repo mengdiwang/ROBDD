@@ -134,18 +134,19 @@ void test5()
 
 void test6()
 {
-    bdd x, y, z,s;
-    Robdd *bdd = new Robdd(4);
-    bdd->InitVars(3);
-    x.robdd = bdd;
-    y.robdd = bdd;
-    z.robdd = bdd;
+    const int size = 10;
+    bdd x[size], s;
+    Robdd *bdd = new Robdd(size+1);
+    bdd->InitVars(size);
+    
+    for(int i=0; i<size; i++)
+    {
+        x[i].robdd = bdd;
+        x[i].GetIthvar(i+1);
+    }
     s.robdd = bdd;
     
-    x.GetIthvar(1);
-    y.GetIthvar(2);
-    z.GetIthvar(3);
-    s = x&y|!z;
+    s = x[1] & x[2] & x[3] | x[4] |x[5] |x[6]|x[7] &x[8] &x[9] & x[0];
     
     bdd->PrintNodes(s.id());
     //bdd->AnySat(s.id());
@@ -164,21 +165,37 @@ void test7()
     bdd->PrintNodes(x5);
 }
 
+void test8()
+{
+    bdd x, y, z,s;
+    Robdd *bdd = new Robdd(4);
+    bdd->InitVars(3);
+    x.robdd = bdd;
+    y.robdd = bdd;
+    z.robdd = bdd;
+    x.GetIthvar(1);
+    y.GetIthvar(2);
+    z.GetIthvar(3);
+    
+    s.robdd = bdd;
+
+    s = x&y|!z;
+    bdd->PrintNodes(s.id());
+}
+
 int main()
 {
     float duration;
     clock_t start, finish;
-    start = clock();
+    
+//    start = clock();
+//    test8();
+//    finish = clock();
+//    duration = (double)(finish - start) / CLOCKS_PER_SEC *1000;
+//    printf( "%f ms\n", duration);
 
+    start = clock();
     test6();
-    
-    finish = clock();
-    duration = (double)(finish - start) / CLOCKS_PER_SEC *1000;
-    printf( "%f ms\n", duration);
-    
-    start = clock();
-
-    test7();
     finish = clock();
     duration = (double)(finish - start) / CLOCKS_PER_SEC *1000;
     printf( "%f ms\n", duration);
