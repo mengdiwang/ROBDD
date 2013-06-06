@@ -1,0 +1,102 @@
+#include "../robdd.h"
+#include "../bdd.h"
+#include <stdio.h>
+#include <string.h>
+int main()
+{
+	float duration;
+	clock_t start, finish;
+	start = clock();
+
+	bdd x1,x2,x3,x4,x5,x6,x7,x8,x9,x10,x11,x12,x13,x14,x15,x16,x17,x18,x19,x20,x21,x22,x23,x24,x25,x26,x27,x28,x29,x30,x31,x32,x33,x34,x35,x36,x37,x38,x39,x40,s;
+	Robdd *bdd = new Robdd(1<<15,1<<15);
+	bdd->InitVars(40);
+	x1.robdd = bdd;
+	x1.GetIthvar(1);
+	x2.robdd = bdd;
+	x2.GetIthvar(2);
+	x3.robdd = bdd;
+	x3.GetIthvar(3);
+	x4.robdd = bdd;
+	x4.GetIthvar(4);
+	x5.robdd = bdd;
+	x5.GetIthvar(5);
+	x6.robdd = bdd;
+	x6.GetIthvar(6);
+	x7.robdd = bdd;
+	x7.GetIthvar(7);
+	x8.robdd = bdd;
+	x8.GetIthvar(8);
+	x9.robdd = bdd;
+	x9.GetIthvar(9);
+	x10.robdd = bdd;
+	x10.GetIthvar(10);
+	x11.robdd = bdd;
+	x11.GetIthvar(11);
+	x12.robdd = bdd;
+	x12.GetIthvar(12);
+	x13.robdd = bdd;
+	x13.GetIthvar(13);
+	x14.robdd = bdd;
+	x14.GetIthvar(14);
+	x15.robdd = bdd;
+	x15.GetIthvar(15);
+	x16.robdd = bdd;
+	x16.GetIthvar(16);
+	x17.robdd = bdd;
+	x17.GetIthvar(17);
+	x18.robdd = bdd;
+	x18.GetIthvar(18);
+	x19.robdd = bdd;
+	x19.GetIthvar(19);
+	x20.robdd = bdd;
+	x20.GetIthvar(20);
+	x21.robdd = bdd;
+	x21.GetIthvar(21);
+	x22.robdd = bdd;
+	x22.GetIthvar(22);
+	x23.robdd = bdd;
+	x23.GetIthvar(23);
+	x24.robdd = bdd;
+	x24.GetIthvar(24);
+	x25.robdd = bdd;
+	x25.GetIthvar(25);
+	x26.robdd = bdd;
+	x26.GetIthvar(26);
+	x27.robdd = bdd;
+	x27.GetIthvar(27);
+	x28.robdd = bdd;
+	x28.GetIthvar(28);
+	x29.robdd = bdd;
+	x29.GetIthvar(29);
+	x30.robdd = bdd;
+	x30.GetIthvar(30);
+	x31.robdd = bdd;
+	x31.GetIthvar(31);
+	x32.robdd = bdd;
+	x32.GetIthvar(32);
+	x33.robdd = bdd;
+	x33.GetIthvar(33);
+	x34.robdd = bdd;
+	x34.GetIthvar(34);
+	x35.robdd = bdd;
+	x35.GetIthvar(35);
+	x36.robdd = bdd;
+	x36.GetIthvar(36);
+	x37.robdd = bdd;
+	x37.GetIthvar(37);
+	x38.robdd = bdd;
+	x38.GetIthvar(38);
+	x39.robdd = bdd;
+	x39.GetIthvar(39);
+	x40.robdd = bdd;
+	x40.GetIthvar(40);
+	s.robdd=bdd;
+	s=!((((!x11 > x18) & (!(x11 ^ (x7 ^ x39)) > !x29)) | (!x29 & !(x31 | !(x11 > x36))) | ((x25 ^ (x26 ^ x39)) > !x38)) & !x16);
+
+	finish = clock();
+	duration = (double)(finish - start) / CLOCKS_PER_SEC *1000;
+	printf( "m=%d,n=%d,!((((!x11 > x18) & (!(x11 ^ (x7 ^ x39)) > !x29)) | (!x29 & !(x31 | !(x11 > x36))) | ((x25 ^ (x26 ^ x39)) > !x38)) & !x16)\n", 40,40);
+	printf( "%f ms\n", duration);
+	return 0;
+}
