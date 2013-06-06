@@ -9,7 +9,7 @@ int main()
 	start = clock();
 
 	bdd x1,x2,x3,x4,x5,x6,x7,x8,x9,x10,x11,x12,x13,x14,x15,x16,x17,x18,x19,x20,s;
-	Robdd *bdd = new Robdd(20);
+	Robdd *bdd = new Robdd(1<<15,1<<15);
 	bdd->InitVars(20);
 	x1.robdd = bdd;
 	x1.GetIthvar(1);
@@ -52,11 +52,11 @@ int main()
 	x20.robdd = bdd;
 	x20.GetIthvar(20);
 	s.robdd=bdd;
-	s=x19;
+	s=!((((((x2 | !x11) > !x16) > x9) & ((!x9 > (x6 ^ ((x9 & x19) > x16))) > (x6 | (!x4 > x16)))) | (x18 & x19 & (x17 | !x9) & !(((x2 & x15) ^ !x2) & (x5 | x11) & !x12 & (x3 ^ x18)))) & !(!x17 | (x18 & !x10)));
 
 	finish = clock();
 	duration = (double)(finish - start) / CLOCKS_PER_SEC *1000;
+	printf( "m=%d,n=%d,!((((((x2 | !x11) > !x16) > x9) & ((!x9 > (x6 ^ ((x9 & x19) > x16))) > (x6 | (!x4 > x16)))) | (x18 & x19 & (x17 | !x9) & !(((x2 & x15) ^ !x2) & (x5 | x11) & !x12 & (x3 ^ x18)))) & !(!x17 | (x18 & !x10)))\n", 80,20);
 	printf( "%f ms\n", duration);
-	printf( "m=%d n=%d\nx19\n", 49,20);
 	return 0;
 }

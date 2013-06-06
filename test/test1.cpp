@@ -8,9 +8,9 @@ int main()
 	clock_t start, finish;
 	start = clock();
 
-	bdd x1,x2,x3,x4,x5,x6,x7,x8,x9,x10,s;
-	Robdd *bdd = new Robdd(10);
-	bdd->InitVars(10);
+	bdd x1,x2,x3,x4,x5,x6,x7,x8,x9,x10,x11,x12,x13,x14,x15,x16,x17,x18,x19,x20,s;
+	Robdd *bdd = new Robdd(1<<15,1<<15);
+	bdd->InitVars(20);
 	x1.robdd = bdd;
 	x1.GetIthvar(1);
 	x2.robdd = bdd;
@@ -31,12 +31,32 @@ int main()
 	x9.GetIthvar(9);
 	x10.robdd = bdd;
 	x10.GetIthvar(10);
+	x11.robdd = bdd;
+	x11.GetIthvar(11);
+	x12.robdd = bdd;
+	x12.GetIthvar(12);
+	x13.robdd = bdd;
+	x13.GetIthvar(13);
+	x14.robdd = bdd;
+	x14.GetIthvar(14);
+	x15.robdd = bdd;
+	x15.GetIthvar(15);
+	x16.robdd = bdd;
+	x16.GetIthvar(16);
+	x17.robdd = bdd;
+	x17.GetIthvar(17);
+	x18.robdd = bdd;
+	x18.GetIthvar(18);
+	x19.robdd = bdd;
+	x19.GetIthvar(19);
+	x20.robdd = bdd;
+	x20.GetIthvar(20);
 	s.robdd=bdd;
-	s=!x5;
+	s=!(((!x15 & (x6 ^ x16)) | (x3 & x8) | (x4 ^ !x16)) & !x19);
 
 	finish = clock();
 	duration = (double)(finish - start) / CLOCKS_PER_SEC *1000;
+	printf( "m=%d,n=%d,!(((!x15 & (x6 ^ x16)) | (x3 & x8) | (x4 ^ !x16)) & !x19)\n", 20,20);
 	printf( "%f ms\n", duration);
-	printf( "m=%d n=%d\n!x5\n", 7,10);
 	return 0;
 }
