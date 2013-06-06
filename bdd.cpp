@@ -136,10 +136,15 @@ bdd bdd::operator<<=(const bdd &r)
     return (*this=bdd_apply(*this, r, InvIMPL));
 }
 
-int bdd::operator==(const bdd &r) const
+bdd bdd::operator==(const bdd &r)
 {
-    return r.idx==idx;
+    return (*this=bdd_apply(*this, r, BiImpl));
 }
+
+//int bdd::operator==(const bdd &r) const
+//{
+//    return r.idx==idx;
+//}
 
 int bdd::operator!=(const bdd &r) const
 {

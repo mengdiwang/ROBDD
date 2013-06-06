@@ -71,7 +71,8 @@ public:
     bdd operator<(const bdd &r) const;
     bdd operator<<(const bdd &r) const;
     bdd operator<<=(const bdd &r);
-    int operator==(const bdd &r) const;
+    bdd operator==(const bdd &r);
+    //int operator==(const bdd &r) const;
     int operator!=(const bdd &r) const;
     
     Robdd *robdd;

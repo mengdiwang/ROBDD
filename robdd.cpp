@@ -8,25 +8,45 @@
 
 #include "robdd.h"
 
+Robdd::Robdd(int nodesize, int cachesize)
+{
+    if(nodesize>BDD_LIMIT) nodesize = BDD_LIMIT;
+    if(cachesize > BDD_HASHTABLE_SIZE) cachesize = BDD_HASHTABLE_SIZE;
+    limit = nodesize;
+    T = new bddNode*[nodesize];
+    H = new Thtable<bddNode, int>(cachesize, &equal, &hash);
+    
+    REQUIRES(H->IsValid());
+}
+
 Robdd::Robdd(int k)
 {
     //Clear();
     
-    num_vars = k;
     limit = BDD_LIMIT;
-    size = 2;
     T = new bddNode*[limit];
-	memset(T, 0, sizeof(limit)*sizeof(bddNode*));
-    T[0] = new bddNode(k+1, 0, 0);
-    T[1] = new bddNode(k+1, 0, 0);
-
     H = new Thtable<bddNode, int>(BDD_HASHTABLE_SIZE, &equal, &hash);
+
+//	memset(T, 0, sizeof(limit)*sizeof(bddNode*));
+//    T[0] = new bddNode(k+1, 0, 0);
+//    T[1] = new bddNode(k+1, 0, 0);
+//
+//    H = new Thtable<bddNode, int>(BDD_HASHTABLE_SIZE, &equal, &hash);
 
     REQUIRES(H->IsValid());
 }
 
 void Robdd::InitVars(int num)
 {
+    num_vars = num;
+    size = 2;
+    memset(T, 0, sizeof(limit)*sizeof(bddNode*));
+    T[0] = new bddNode(num+1, 0, 0);
+    T[1] = new bddNode(num+1, 0, 0);
+    
+    //H = new Thtable<bddNode, int>(BDD_HASHTABLE_SIZE, &equal, &hash);
+    H->clear();
+    
     varset = new int[num_vars<<2+2];
     for(int i=1; i<=num; i++)
     {

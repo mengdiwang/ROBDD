@@ -23,13 +23,6 @@ public:
     
     ~Thtable()
     {
-        clear();
-    }
-
-    bool IsValid();
-    
-    void clear()
-    {
         for(int i=0; i<size; i++)
         {
             if(array[i] != NULL)
@@ -40,7 +33,24 @@ public:
         }
         delete[] array;
         array = NULL;
-//        printf("Called\n");
+    }
+
+    bool IsValid();
+    
+    void clear()
+    {
+        memset(array, 0, sizeof(Tlist<key, element>*) *size);
+//        for(int i=0; i<size; i++)
+//        {
+//            if(array[i] != NULL)
+//            {
+//                delete array[i];
+//                array[i] = NULL;
+//            }
+//        }
+//        delete[] array;
+//        array = NULL;
+
     }
     
     

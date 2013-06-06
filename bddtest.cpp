@@ -146,7 +146,7 @@ void test6()
     }
     s.robdd = bdd;
     
-    s = x[1] & x[2] & x[3] | x[4] |x[5] |x[6]|x[7] &x[8] &x[9] & x[0];
+    s = x[1] & x[2] & x[3] | x[4] |x[5] |x[6]|x[7] &x[8] &x[9] == x[0];
     
     bdd->PrintNodes(s.id());
     //bdd->AnySat(s.id());
@@ -167,20 +167,48 @@ void test7()
 
 void test8()
 {
-    bdd x, y, z,s;
-    Robdd *bdd = new Robdd(4);
+    bdd x1, x2, x3,s;
+    Robdd *bdd = new Robdd(1000,10);
     bdd->InitVars(3);
-    x.robdd = bdd;
-    y.robdd = bdd;
-    z.robdd = bdd;
-    x.GetIthvar(1);
-    y.GetIthvar(2);
-    z.GetIthvar(3);
+    x1.robdd = bdd;
+    x2.robdd = bdd;
+    x3.robdd = bdd;
+    x1.GetIthvar(1);
+    x2.GetIthvar(2);
+    x3.GetIthvar(3);
     
     s.robdd = bdd;
 
-    s = x&y|!z;
-    bdd->PrintNodes(s.id());
+    s = !(((!x3 > !x2) & (x2 | ((x2 ^ (x2 ^ x3)) > ((x1 & !(x3 | !x1)) | (!x2 > x3))))) | !(x3 | !(!x2 | (x1 ^ (x3 | !x2)))));
+//    bdd->PrintNodes(s.id());
+    
+//    bdd->InitVars(3);
+//    x1.robdd = bdd;
+//    x2.robdd = bdd;
+//    x3.robdd = bdd;
+//    x1.GetIthvar(1);
+//    x2.GetIthvar(2);
+//    x3.GetIthvar(3);
+//    
+//    s.robdd = bdd;
+//    
+//    s = !(((!x3 > !x2) & (x2 | ((x2 ^ (x2 ^ x3)) > ((x1 & !(x3 | !x1)) | (!x2 > x3))))) | !(x3 | !(!x2 | (x1 ^ (x3 | !x2)))));
+//    //    s = x&y|!z;
+//    bdd->PrintNodes(s.id());
+//    
+//    bdd->InitVars(3);
+//    x1.robdd = bdd;
+//    x2.robdd = bdd;
+//    x3.robdd = bdd;
+//    x1.GetIthvar(1);
+//    x2.GetIthvar(2);
+//    x3.GetIthvar(3);
+//    
+//    s.robdd = bdd;
+//    
+//    s = !(((!x3 > !x2) & (x2 | ((x2 ^ (x2 ^ x3)) > ((x1 & !(x3 | !x1)) | (!x2 > x3))))) | !(x3 | !(!x2 | (x1 ^ (x3 | !x2)))));
+//    //    s = x&y|!z;
+//    bdd->PrintNodes(s.id());
 }
 
 int main()
@@ -195,7 +223,7 @@ int main()
 //    printf( "%f ms\n", duration);
 
     start = clock();
-    test6();
+    test8();
     finish = clock();
     duration = (double)(finish - start) / CLOCKS_PER_SEC *1000;
     printf( "%f ms\n", duration);

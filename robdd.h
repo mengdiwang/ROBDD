@@ -67,6 +67,7 @@ class Robdd
 {
 public:
     Robdd(int k);
+    Robdd(int nodesize, int cachesize);
     
     ~Robdd();
     
