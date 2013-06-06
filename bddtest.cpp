@@ -6,12 +6,13 @@
 //  Copyright (c) 2013年 Mengdi Wang. All rights reserved.
 //
 
-#include "CNFExp.h"
+//#include "CNFExp.h"
 #include "robdd.h"
 #include "bdd.h"
-#include <iostream>
+//#include <iostream>
 #include <string.h>
-#include <assert.h>
+#include <stdio.h>
+//#include <assert.h>
 
 void test1()
 {
