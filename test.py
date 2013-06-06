@@ -89,13 +89,15 @@ def buddyGen(m, n, formula):
 
 def main():
     t = 0;
+    stepm = 15;
+    stepn = 20;
     limitm = 3;
     limitn = 3;
     if(sys.argv > 1):
         limitm = int(sys.argv[1]);
     
     if(sys.argv > 2):
-        limitm = int(sys.argv[2]);
+        limitn = int(sys.argv[2]);
    
     retstr = '';
 
@@ -117,11 +119,13 @@ def main():
     file_c = open(cplfile, 'w');
     file_r = open(runfile, 'w')
     file_r2 = open(runfile2, 'w')
+    file_r.write('rm *.o\nrm *.cpp\n');
+    file_r2.write('rm *.o\nrm *.cpp\n');
     
     for j in range(1,limitn):
         for i in range(1,limitm):
-            n = 20 * j;
-            m = 20 * i;
+            m = stepm * i;
+            n = stepn * j;
             t = t + 1;
         
             print 'm=' + str(m) + ' n=' + str(n);
@@ -145,7 +149,8 @@ def main():
             cplstr = 'g++ -c '+filename+'.cpp -o ' + filename + '.o\n';
             lnkstr = 'g++ '+filename+'.o ../bin/CNFExp.o ../bin/bdd.o ../bin/utilfunc.o ../bin/robdd.o -o ' + filename + '\n'; 
             runstr = './'+filename+'\n';
-        
+            runstr += 'rm '+filename+'\n';
+            
             file_c.write(cplstr);
             file_c.write(lnkstr);
             file_r.write(runstr);
@@ -166,6 +171,8 @@ def main():
             
             cplstr = 'g++ '+filename+'.cpp -o ' + filename + ' -lbdd\n';
             runstr = './'+filename+'\n';
+            runstr += 'rm '+filename+'\n';
+            
             file_c.write(cplstr);
             file_r2.write(runstr);
             
