@@ -4,6 +4,9 @@ import string
 import math
 import sys
 
+initsize = '10000';
+cachsize = '100';
+
 def randFomula(m, n):
     exp = '';
     for i in range(1, n+1):
@@ -20,9 +23,7 @@ def randFomula(m, n):
 def robddGen(m, n, formula):
     exp = '';
     init = '';
-    initsize = '1<<15';
-    cachsize = '1<<15';
-    
+
     init += '#include \"../robdd.h\"\n';
     init += '#include \"../bdd.h\"\n';
     init += '#include <stdio.h>\n';
@@ -57,8 +58,6 @@ def robddGen(m, n, formula):
 def buddyGen(m, n, formula):
     exp = '';
     init = '';
-    initsize = '1<<15';
-    cachsize = '1<<15';
     
     init += '#include <bdd.h>\n';
     init += '#include <stdio.h>\n';
@@ -93,10 +92,10 @@ def main():
     stepn = 20;
     limitm = 3;
     limitn = 3;
-    if(sys.argv > 1):
+    if(sys.argv > 2):
         limitm = int(sys.argv[1]);
     
-    if(sys.argv > 2):
+    if(sys.argv > 3):
         limitn = int(sys.argv[2]);
    
     retstr = '';
@@ -104,10 +103,12 @@ def main():
     cplfile = 'compile.sh';
     runfile = 'run.sh';
     runfile2 = 'run_bdd.sh';
+    clrfile = 'clear.sh'
     
     cpath = os.getcwd() + '/' + cplfile;
     rpath = os.getcwd() + '/' + runfile;
     rpath2 = os.getcwd() + '/' + runfile2;
+    cpath = os.getcwd() + '/' + clrfile;
     
     if os.path.exists(cpath):
         os.remove(cplfile)
@@ -115,12 +116,15 @@ def main():
         os.remove(runfile)
     if os.path.exists(rpath2):
         os.remove(runfile2)
+    if os.path.exists(cpath):
+        os.remove(clrfile)
     
     file_c = open(cplfile, 'w');
     file_r = open(runfile, 'w')
     file_r2 = open(runfile2, 'w')
-    file_r.write('rm *.o\nrm *.cpp\n');
-    file_r2.write('rm *.o\nrm *.cpp\n');
+    file_clr = open(clrfile, 'w')
+    file_clr.write('rm *.o\nrm *.cpp\n');
+    file_clr.write('rm *.o\nrm *.cpp\n');
     
     for j in range(1,limitn):
         for i in range(1,limitm):
@@ -136,12 +140,12 @@ def main():
             filename = 'test' + str(t);
             filecpp = filename + '.cpp';
             fpath = os.getcwd() + "/" + filecpp;
-            if os.path.exists(fpath):
-                os.remove(filecpp);
-            if os.path.exists(filename):
-                os.remove(filename);
-            if os.path.exists(filename+'.o'):
-                os.remove(filename+".o");
+            #if os.path.exists(fpath):
+            #    os.remove(filecpp);
+            #if os.path.exists(filename):
+            #    os.remove(filename);
+            #if os.path.exists(filename+'.o'):
+            #    os.remove(filename+".o");
             file_object = open(filecpp, 'w');
             file_object.write(ret);
             
@@ -149,39 +153,41 @@ def main():
             cplstr = 'g++ -c '+filename+'.cpp -o ' + filename + '.o\n';
             lnkstr = 'g++ '+filename+'.o ../bin/CNFExp.o ../bin/bdd.o ../bin/utilfunc.o ../bin/robdd.o -o ' + filename + '\n'; 
             runstr = './'+filename+'\n';
-            runstr += 'rm '+filename+'\n';
+            clrstr = 'rm '+filename+'\n';
             
             file_c.write(cplstr);
             file_c.write(lnkstr);
             file_r.write(runstr);
+            file_clr.write(clrstr);
         
             ############# BDD GENERATION ##################
             ret = buddyGen(m, n, formula);
             filename = 'bddtest' + str(t);
             filecpp = filename + '.cpp';
             fpath = os.getcwd() + "/" + filecpp;
-            if os.path.exists(fpath):
-                os.remove(filecpp);
-            if os.path.exists(filename):
-                os.remove(filename);
-            if os.path.exists(filename+'.o'):
-                os.remove(filename+".o");
+            #if os.path.exists(fpath):
+            #    os.remove(filecpp);
+            #if os.path.exists(filename):
+            #    os.remove(filename);
+            #if os.path.exists(filename+'.o'):
+            #    os.remove(filename+".o");
             file_object = open(filecpp, 'w');
             file_object.write(ret);
             
             cplstr = 'g++ '+filename+'.cpp -o ' + filename + ' -lbdd\n';
             runstr = './'+filename+'\n';
-            runstr += 'rm '+filename+'\n';
+            clrstr = 'rm '+filename+'\n';
             
             file_c.write(cplstr);
             file_r2.write(runstr);
-            
+            file_clr.write(clrstr);
             
             ###print runret[0];
             file_object.close();
     file_c.close();
     file_r.close();
     file_r2.close();
+    file_clr.close();
 
     output = subprocess.Popen('source ./compile.sh', stdout=subprocess.PIPE,shell=True).communicate();
     #output = subprocess.Popen('source ./run.sh', stdout=subprocess.PIPE,shell=True).communicate();
