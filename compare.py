@@ -31,7 +31,15 @@ def main():
         else:
             print collection[idx];
             print '';
-        
-        
+    print '[scale] [robdd] [buddy]'
+    for idx in range(len(collection)):
+        if(idx % 2 == 1):
+            print collection[idx][:-3] + ' ' +collectionbdd[idx][:-3];
+        else:
+            pos = collection[idx].rfind(',')
+            rpos = len(collection[idx])-pos;
+            sys.stdout.write(collection[idx][:-rpos] + ' ')
+            
+    
 if __name__ == "__main__":
     main()
