@@ -9,9 +9,10 @@
 #include "CNFExp.h"
 #include "robdd.h"
 #include "bdd.h"
-//#include <iostream>
+#include <iostream>
 #include <string.h>
 #include <stdio.h>
+#include "CNFExp.h"
 //#include <assert.h>
 
 void test1()

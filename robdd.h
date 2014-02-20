@@ -108,7 +108,7 @@ public:
     int GetIthVarNeg(int var)
     {
         if(1<=var && var<=num_vars)
-            return varset[var<<1+1];
+            return varset[(var<<1)+1];
         return -1;
     }
 

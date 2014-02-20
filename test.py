@@ -92,10 +92,13 @@ def main():
     stepn = 20;
     limitm = 3;
     limitn = 3;
-    if(sys.argv > 2):
+    if len(sys.argv)<3:
+        sys.exit('Usage: %s m n' % sys.argv[0])
+        
+    if(sys.argv >= 2):
         limitm = int(sys.argv[1]);
     
-    if(sys.argv > 3):
+    if(sys.argv >= 3):
         limitn = int(sys.argv[2]);
    
     retstr = '';

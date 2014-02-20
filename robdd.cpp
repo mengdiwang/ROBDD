@@ -7,6 +7,7 @@
 //
 
 #include "robdd.h"
+#include <memory.h>
 
 Robdd::Robdd(int nodesize, int cachesize)
 {
@@ -47,11 +48,11 @@ void Robdd::InitVars(int num)
     //H = new Thtable<bddNode, int>(BDD_HASHTABLE_SIZE, &equal, &hash);
     H->clear();
     
-    varset = new int[num_vars<<2+2];
+    varset = new int[(num_vars<<2)+2];
     for(int i=1; i<=num; i++)
     {
         varset[i<<1] = Mk(i, 0, 1);
-        varset[i<<1+1] = Mk(i, 1, 0);
+        varset[(i<<1)+1] = Mk(i, 1, 0);
     }
 }
 

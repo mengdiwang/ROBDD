@@ -7,6 +7,7 @@
 //
 
 #include "CNFExp.h"
+#include <string>
 
 void CNFExp::ProduceStack(std::string formula)
 {
@@ -18,7 +19,7 @@ void CNFExp::ProduceStack(std::string formula)
 	
 	position = 0; //后缀表达式 下标
 	int i=0; //遍历表达式
-	char ch = formula.at(i);
+	char ch = formula[i];
 	while(ch != '#')
 	{
 		switch(ch)
@@ -64,7 +65,7 @@ void CNFExp::ProduceStack(std::string formula)
                 position++;
 		}
 		i++;
-		ch = formula.at(i);
+		ch = formula[i];
 	}
 	//表达式处理完毕，将当前所有操作数出栈
 	while(mystack[top] != '#')

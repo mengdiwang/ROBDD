@@ -3,3 +3,6 @@ cnf
 nqueens
 robdd
 hashtable
+test/*.cpp
+test/test*
+test/bddtest*
